@@ -1,0 +1,38 @@
+# Exclude the build directory
+Build/Output/*
+
+# Exclude command line build directory
+build/
+
+# Exclude temp nibs and swap files
+*~.nib
+*.swp
+
+# Exclude OS X folder attributes
+.DS_Store
+
+# Exclude user-specific XCode 3 and 4 files
+*.mode1
+*.mode1v3
+*.mode2v3
+*.perspective
+*.perspectivev3
+*.pbxuser
+*.xcworkspace
+xcuserdata
+
+# CocoaPods
+Pods
+Podfile.lock
+
+# AppCode
+.idea/
+
+# Exclude Fabric's api-key, build-secret, and release-note
+api-key.txt
+build-secret.txt
+release-notes.txt
+
+# Exclude fastlane's files
+fastlane/report.xml
+fastlane/Gemfile.lock
