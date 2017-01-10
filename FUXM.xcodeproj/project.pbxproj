@@ -227,7 +227,7 @@
 				TargetAttributes = {
 					E91641FA1DF840C300B89E8E = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = W86V7AHLF3;
+						DevelopmentTeam = EQN2X4PJRL;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -460,10 +460,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = W86V7AHLF3;
+				DEVELOPMENT_TEAM = EQN2X4PJRL;
 				INFOPLIST_FILE = FUXM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.FUXM;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.FUXM-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -473,10 +473,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = W86V7AHLF3;
+				DEVELOPMENT_TEAM = EQN2X4PJRL;
 				INFOPLIST_FILE = FUXM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.FUXM;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.FUXM-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

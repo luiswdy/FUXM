@@ -173,7 +173,6 @@ import CoreBluetooth
 	//    public static final TEST_SELFTEST = 0x2t
  }
  
- ***/
 
 
 enum XiaoMiCharacteristics: String {
@@ -299,3 +298,5 @@ class MiBand1Controller: NSObject {
         UserDefaults.standard.set(uuid.uuidString, forKey: FUUserDefaultsKeys.pairPeripheralUUID.rawValue)
     }
 }
+
+ ***/

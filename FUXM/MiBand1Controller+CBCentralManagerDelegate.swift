@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 
+/*
 extension MiBand1Controller: CBCentralManagerDelegate {
     
     // core bluetooth central manager delegate
@@ -135,3 +136,5 @@ extension MiBand1Controller: CBCentralManagerDelegate {
     //    }
     
 }
+
+ */

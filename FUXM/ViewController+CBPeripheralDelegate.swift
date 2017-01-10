@@ -5,6 +5,8 @@
 //  Created by Luis Wu on 12/15/16.
 //  Copyright © 2016 Luis Wu. All rights reserved.
 //
+ 
+ /*
 
 import CoreBluetooth
 
@@ -70,7 +72,7 @@ extension ViewController: CBPeripheralDelegate {
 //        if service.uuid == CBUUID(string: "1802") {
 //            service.characteristics?.forEach({ (characteristic) in
 //                print("characteristic \(characteristic)")
-//                let data = Data(UInt8s: [8])  // 0 no alert, 1 mild alert, 2 high alert , 4 ：vibrate only
+//                let data = Data(UInt8: [8])  // 0 no alert, 1 mild alert, 2 high alert , 4 ：vibrate only
 //                
 //                peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
 //            })
@@ -432,3 +434,5 @@ extension ViewController: CBPeripheralDelegate {
     }
     
 }
+
+  */

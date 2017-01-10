@@ -23,14 +23,14 @@ class FUDataReader {
         return String(bytes: data.suffix(from: start), encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    func fromUInt8Array<T>(_ value: [UInt8], _: T.Type) -> T {
+    static func fromUInt8Array<T>(_ value: [UInt8], _: T.Type) -> T {
         return value.withUnsafeBytes{
             $0.baseAddress!.load(as: T.self)
         }
     }
     
     // Convert to Data
-    func toUInt8Array<T>(_ value: T) -> [UInt8] {
+    static func toUInt8Array<T>(_ value: T) -> [UInt8] {
         var value = value
         return withUnsafeBytes(of: &value) { Array($0) }
     }
