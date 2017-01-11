@@ -185,6 +185,13 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     var servicesAvailable: [ServiceUUID : CBService] = [:]
     var characteristicsAvailable: [CharacteristicUUID : CBCharacteristic] = [:]
     
+    // TEST
+    
+    var test : Int32 = 0
+    // END TEST
+    
+    
+    
     @IBOutlet var scanBtn: UIButton!
     @IBOutlet var stopScanBtn: UIButton!
     @IBOutlet var vibrateBtn: UIButton!
@@ -245,10 +252,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         // TODO
         pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 6, 6, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
         pairingPeripheral?.writeValue(Data(bytes:[0x1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
-        let userInfo = createUserInfo(uid: 1616888723, gender: 1, age: 36, height: 170, weight: 64, type: 1, alias: "Luis")
-        pairingPeripheral?.writeValue(userInfo, for: characteristicsAvailable[CharacteristicUUID.userInfo]!, type: .withResponse)
         pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setWearPosition.rawValue, 0]), for: characteristicsAvailable[CharacteristicUUID.controlPoint]!, type: .withResponse)
-        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setFitnessGoal.rawValue, 0x0, UInt8(truncatingBitPattern: 900), UInt8(truncatingBitPattern: 900 >> 8)]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
     }
     
     // MARK - CBCentralManagerDelegate - monitoring connections with peripherals
@@ -549,8 +553,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         pairingPeripheral?.readValue(for: characteristicsAvailable[CharacteristicUUID.dateTime]!)
         pairingPeripheral?.writeValue(Data(bytes:[0x2]), for: characteristicsAvailable[CharacteristicUUID.pair]!, type: .withResponse)
         pairingPeripheral?.readValue(for: characteristicsAvailable[CharacteristicUUID.deviceInfo]!)
-//        let userInfo = createUserInfo(uid: 1616888723, gender: 1, age: 36, height: 170, weight: 64, type: 1, alias: "Luis")
-        let userInfo = Data(bytes: [0x73, 0xdc, 0x32, 0x0, 0x2, 0x19, 0xaf, 0x46, 0x0, 0x6c, 0x75, 0x69, 0x73, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x25]) // HERE! the user info format
+        let userInfo = createUserInfo(uid: test, gender: 1, age: 36, height: 170, weight: 64, type: 1, alias: "Luis")
+//        let userInfo = Data(bytes: [0x73, 0xdc, 0x32, 0x0, 0x2, 0x19, 0xaf, 0x46, 0x0, 0x6c, 0x75, 0x69, 0x73, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x25]) // HERE! the user info format
         pairingPeripheral?.writeValue(userInfo, for: characteristicsAvailable[CharacteristicUUID.userInfo]!, type: .withResponse)
         
         // check authentication needed
@@ -618,12 +622,12 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         return Data(bytes: bytes)
     }
     
-    func createUserInfo(uid: Int, gender: Int, age: Int, height: Int, weight: Int, type: Int, alias: String) -> Data {
+    func createUserInfo(uid: Int32, gender: Int, age: Int, height: Int, weight: Int, type: Int, alias: String) -> Data {
         var bytes: [UInt8] = []
-        bytes.append(UInt8(truncatingBitPattern: uid))
-        bytes.append(UInt8(truncatingBitPattern: uid >> 8))
-        bytes.append(UInt8(truncatingBitPattern: uid >> 16))
-        bytes.append(UInt8(truncatingBitPattern: uid >> 24))
+        bytes.append(UInt8(truncatingBitPattern: uid.bigEndian))
+        bytes.append(UInt8(truncatingBitPattern: uid.bigEndian >> 8))
+        bytes.append(UInt8(truncatingBitPattern: uid.bigEndian >> 16))
+        bytes.append(UInt8(truncatingBitPattern: uid.bigEndian >> 24))
         bytes.append(UInt8(truncatingBitPattern: gender))
         bytes.append(UInt8(truncatingBitPattern: age))
         bytes.append(UInt8(truncatingBitPattern: height))
@@ -634,7 +638,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         if  paddingCount > 0  {
             bytes.append(contentsOf: Array<UInt8>(repeating:UInt8(0), count:paddingCount))
         }
-        bytes.append(checksum(bytes: bytes, from: 0, length: 19, lastMACByte:0x99))
+        bytes.append(checksum(bytes: bytes, from: 0, length: 19, lastMACByte:0x3E))  // 3E may from deviceInfo's last byte!
         // TODO not mili 1
         return Data(bytes: bytes)
     }
@@ -766,6 +770,13 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             deviceId.append(String(format: "%02x", byte))
         }
         print("deviceId: \(deviceId)")
+        
+        
+        let testBytes = value!.subdata(in: 0..<8)
+        test = testBytes.withUnsafeBytes({ (pointer: UnsafePointer<Int32>) -> Int32 in
+            return pointer.pointee
+        })
+        
         
         // UInt8 11, 10, 9, 8 (profile version x.x.x.x)
         var profileVersion = ""
