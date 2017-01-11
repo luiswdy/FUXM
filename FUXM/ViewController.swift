@@ -377,6 +377,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         })
         if let ready = gotAllCharacteristics, ready == true {
             storePairedPeripheralUUID(peripheral.identifier)
+            pairingPeripheral = peripheral  // set as active one
             setupForPeripheral()
         }
         
