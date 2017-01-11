@@ -65,28 +65,30 @@ enum Notifications: UInt8 {
     case
 //    unknown = -0x1,
     normal = 0x0,
-    firmwareUpdateFailed,
-    firmwareUpdateSuccess,
-    connParamUpdateFailed,
-    connParamUpdateSuccess,
-    authSuccess,
-    authFailed,
-    fitnessGoalAchieved,
-    setLatencySuccess,
-    resetAuthFailed,
-    resetAuthSuccess,
-    firmwareCheckFailed,
-    firmwareCheckSuccess,
-    motorNotify,
-    motorCall,
-    motorDisconnect,
-    motorSmartAlarm,
-    motorAlarm,
-    motorGoal,
-    motorAuth,
-    motorShutdown,
-    motorAuthSuccess,
-    motorTest,
+    firmwareUpdateFailed,   // 1
+    firmwareUpdateSuccess,  // 2
+    connParamUpdateFailed,  // 3
+    connParamUpdateSuccess, // 4
+    authSuccess,            // 5        <- after 15 comes to here
+    authFailed,             // 6
+    fitnessGoalAchieved,    // 7
+    setLatencySuccess,      // 8
+    resetAuthFailed,        // 9
+    resetAuthSuccess,       // 10   a
+    firmwareCheckFailed,    // 11   b
+    firmwareCheckSuccess,   // 12   c
+    motorNotify,            // 13   d
+    motorCall,              // 14   e
+    motorDisconnect,        // 15   f
+    motorSmartAlarm,        // 16   10
+    motorAlarm,             // 17   11
+    motorGoal,              // 18   12
+    motorAuth,              // 19   13
+    motorShutdown,          // 20   14
+    motorAuthSuccess,       // 21   15 <-
+    motorTest,              // 22   16
+    
+                                    //18 !?
     pairCancel = 0xef,
     deviceMalfunction = 0xff
 }
@@ -241,7 +243,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     @IBAction func vibrate(sender: UIButton) {
         debugPrint("\(#function) sender: \(sender)")
         // TODO
-        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 1, 1, 1, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
+        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 6, 6, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
         pairingPeripheral?.writeValue(Data(bytes:[0x1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
         let userInfo = createUserInfo(uid: 1616888723, gender: 1, age: 36, height: 170, weight: 64, type: 1, alias: "Luis")
         pairingPeripheral?.writeValue(userInfo, for: characteristicsAvailable[CharacteristicUUID.userInfo]!, type: .withResponse)
@@ -547,15 +549,23 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         pairingPeripheral?.readValue(for: characteristicsAvailable[CharacteristicUUID.dateTime]!)
         pairingPeripheral?.writeValue(Data(bytes:[0x2]), for: characteristicsAvailable[CharacteristicUUID.pair]!, type: .withResponse)
         pairingPeripheral?.readValue(for: characteristicsAvailable[CharacteristicUUID.deviceInfo]!)
-        pairingPeripheral?.readValue(for: characteristicsAvailable[CharacteristicUUID.userInfo]!)
-        let userInfo = createUserInfo(uid: 1616888723, gender: 1, age: 36, height: 170, weight: 64, type: 1, alias: "Luis")
+//        let userInfo = createUserInfo(uid: 1616888723, gender: 1, age: 36, height: 170, weight: 64, type: 1, alias: "Luis")
+        let userInfo = Data(bytes: [0x73, 0xdc, 0x32, 0x0, 0x2, 0x19, 0xaf, 0x46, 0x0, 0x6c, 0x75, 0x69, 0x73, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x25]) // HERE! the user info format
         pairingPeripheral?.writeValue(userInfo, for: characteristicsAvailable[CharacteristicUUID.userInfo]!, type: .withResponse)
+        
+        // check authentication needed
+        
         pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setWearPosition.rawValue, 1]), for: characteristicsAvailable[CharacteristicUUID.controlPoint]!, type: .withResponse)
-        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setFitnessGoal.rawValue, 0x0, UInt8(truncatingBitPattern: 900), UInt8(truncatingBitPattern: 900 >> 8)]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
+        
+        // setHeartrateSleepSupport (may not apply)
+        
+        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setFitnessGoal.rawValue, 0x0, UInt8(truncatingBitPattern: 10000), UInt8(truncatingBitPattern: 10000 >> 8)]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
+        
         pairingPeripheral?.setNotifyValue(true, for: characteristicsAvailable[.realtimeSteps]!)
         pairingPeripheral?.setNotifyValue(true, for: characteristicsAvailable[.activityData]!)
         pairingPeripheral?.setNotifyValue(true, for: characteristicsAvailable[.battery]!)
         pairingPeripheral?.setNotifyValue(true, for: characteristicsAvailable[.sensorData]!)
+        
         let nowData = createDate(newerDate: Date())
         pairingPeripheral?.writeValue(nowData, for: characteristicsAvailable[.dateTime]!, type: .withResponse)
         pairingPeripheral?.readValue(for: characteristicsAvailable[.battery]!)
@@ -565,10 +575,11 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         // TODO : set initialized
         
         
+//        pairingPeripheral?.readValue(for: characteristicsAvailable[CharacteristicUUID.userInfo]!)
         // TEST
         
 //        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.sendNotification.rawValue, 1]), for: characteristicsAvailable[CharacteristicUUID.controlPoint]!, type: .withoutResponse)
-        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 6, 0, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
+//        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 6, 0, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
 //        pairingPeripheral?.writeValue(Data(bytes:[0x1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
 //        pairingPeripheral?.readValue(for: characteristicsAvailable[.sensorData]!)
         
