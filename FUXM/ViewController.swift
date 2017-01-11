@@ -250,9 +250,16 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     @IBAction func vibrate(sender: UIButton) {
         debugPrint("\(#function) sender: \(sender)")
         // TODO
-        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 6, 6, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
-        pairingPeripheral?.writeValue(Data(bytes:[0x1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
-        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setWearPosition.rawValue, 0]), for: characteristicsAvailable[CharacteristicUUID.controlPoint]!, type: .withResponse)
+//        pairingPeripheral?.writeValue(Data(bytes:[0x1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
+//        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setWearPosition.rawValue, 0]), for: characteristicsAvailable[CharacteristicUUID.controlPoint]!, type: .withResponse)
+//        pairingPeripheral?.writeValue(Data(bytes:[0x1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)   // workable!
+        
+        
+//        pairingPeripheral?.writeValue(Data(bytes:[1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)   // workable!
+//        pairingPeripheral?.writeValue(Data(bytes:[4]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)   // workable!
+//        pairingPeripheral?.writeValue(Data(bytes:[2]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)   // workable!
+        pairingPeripheral?.writeValue(Data(bytes:[1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)   // workable!
+        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.reboot.rawValue]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
     }
     
     // MARK - CBCentralManagerDelegate - monitoring connections with peripherals
@@ -450,6 +457,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             break
         case .sensorData:
             // TODO
+            handleSensorData(value: characteristic.value)
             break
         case .pair:
             // TODO
@@ -553,13 +561,15 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         pairingPeripheral?.readValue(for: characteristicsAvailable[CharacteristicUUID.dateTime]!)
         pairingPeripheral?.writeValue(Data(bytes:[0x2]), for: characteristicsAvailable[CharacteristicUUID.pair]!, type: .withResponse)
         pairingPeripheral?.readValue(for: characteristicsAvailable[CharacteristicUUID.deviceInfo]!)
-        let userInfo = createUserInfo(uid: test, gender: 1, age: 36, height: 170, weight: 64, type: 1, alias: "Luis")
+//        let userInfo = createUserInfo(uid: test, gender: 1, age: 36, height: 170, weight: 64, type: 1, alias: "Luis")
 //        let userInfo = Data(bytes: [0x73, 0xdc, 0x32, 0x0, 0x2, 0x19, 0xaf, 0x46, 0x0, 0x6c, 0x75, 0x69, 0x73, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x25]) // HERE! the user info format
-        pairingPeripheral?.writeValue(userInfo, for: characteristicsAvailable[CharacteristicUUID.userInfo]!, type: .withResponse)
+//        pairingPeripheral?.writeValue(userInfo, for: characteristicsAvailable[CharacteristicUUID.userInfo]!, type: .withResponse)
+        
+        pairingPeripheral?.readValue(for: characteristicsAvailable[.userInfo]!)
         
         // check authentication needed
         
-        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setWearPosition.rawValue, 1]), for: characteristicsAvailable[CharacteristicUUID.controlPoint]!, type: .withResponse)
+        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setWearPosition.rawValue, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
         
         // setHeartrateSleepSupport (may not apply)
         
@@ -585,7 +595,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
 //        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.sendNotification.rawValue, 1]), for: characteristicsAvailable[CharacteristicUUID.controlPoint]!, type: .withoutResponse)
 //        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 6, 0, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
 //        pairingPeripheral?.writeValue(Data(bytes:[0x1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
-//        pairingPeripheral?.readValue(for: characteristicsAvailable[.sensorData]!)
+        
+        pairingPeripheral?.writeValue(Data(bytes:[0x12, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
+        
+        pairingPeripheral?.readValue(for: characteristicsAvailable[.sensorData]!)
         
         
 //        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 0, 0, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
