@@ -8,6 +8,9 @@
 import CoreBluetooth
 
 // NOTE: This class support ONLY miband 1 (might probably work with 1A with limited support)
+struct GlobalConsts {
+    static let hexRadix = 16
+}
 
 class MiBandController: NSObject {
     // constants
@@ -20,7 +23,6 @@ class MiBandController: NSObject {
                                                             CBConnectPeripheralOptionNotifyOnDisconnectionKey : true,
                                                             CBConnectPeripheralOptionNotifyOnNotificationKey : true
         ]
-        static let hexRadix = 16
         static let scanDuration = 5 // in sec
         static let miBandServiceUUIDs: [CBUUID] = { () -> [CBUUID] in
             var uuids = [CBUUID]()

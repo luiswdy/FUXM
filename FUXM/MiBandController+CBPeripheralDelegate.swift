@@ -46,7 +46,7 @@ extension MiBandController: CBPeripheralDelegate {
         }
         
         for characteristic in characteristics {
-            characteristicsAvailable[FUCharacteristicUUID(rawValue: UInt16(characteristic.uuid.uuidString, radix: Consts.hexRadix)!)!] = characteristic    // TODO: crash due to receiving characteristic of UUID FED0
+            characteristicsAvailable[FUCharacteristicUUID(rawValue: UInt16(characteristic.uuid.uuidString, radix: GlobalConsts.hexRadix)!)!] = characteristic    // TODO: crash due to receiving characteristic of UUID FED0
         }
         
         let gotAllCharacteristics = peripheral.services?.reduce(true, { (result, service) -> Bool in
@@ -74,7 +74,7 @@ extension MiBandController: CBPeripheralDelegate {
             // TODO: handle notified value
         }
         
-        guard let converted = UInt16(characteristic.uuid.uuidString, radix:Consts.hexRadix),
+        guard let converted = UInt16(characteristic.uuid.uuidString, radix:GlobalConsts.hexRadix),
             let uuid = FUCharacteristicUUID(rawValue: converted) else {
             debugPrint("Cannot convert incoming uuid \(characteristic.uuid). Abort")
             return
