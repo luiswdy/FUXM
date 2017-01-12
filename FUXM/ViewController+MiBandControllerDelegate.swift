@@ -1,0 +1,39 @@
+//
+//  ViewController+MiBandControllerDelegate.swift
+//  FUXM
+//
+//  Created by Luis Wu on 1/12/17.
+//  Copyright © 2017 Luis Wu. All rights reserved.
+//
+import UIKit
+import CoreBluetooth.CBPeripheral
+
+extension ViewController: MiBandControllerDelegate {
+    func onMiBandsDiscovered(peripherals: [CBPeripheral]) {
+        if peripherals.count > 0 {
+            let alert = UIAlertController(title: "Devices found", message: "Choose the device to pair with", preferredStyle: .actionSheet)
+            for peripheral in peripherals {
+                if let name = peripheral.name {
+                    alert.addAction(
+                        UIAlertAction(title: name, style: .default, handler: { [unowned self] (action) in
+                            self.miController?.connect(peripheral)
+                        }))
+                }
+            }
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController(title: "Devices not found", message: "Devices not foud", preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func onConnected() {
+        // TODO
+    }
+    
+    func onUpdateDeviceInfo(deviceInfo: FUDeviceInfo?, isNotifiying: Bool, error: Error?) {
+        debugPrint(deviceInfo)
+    }
+}

@@ -9,6 +9,10 @@
 import UIKit
 
 class ViewController: UIViewController {
+    // MARK - properties
+    var miController: MiBandController?
+    
+    // MARK - Interface Builder outlets
     @IBOutlet var scanBtn: UIButton!
     @IBOutlet var stopScanBtn: UIButton!
     @IBOutlet var vibrateBtn: UIButton!
@@ -16,8 +20,11 @@ class ViewController: UIViewController {
     // MARK - view life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        enableButtons()
+        enableButtons() // TEST
+        miController = MiBandController(delegate: self)
+        if let boundPeripheralUUID = MiBandUserDefaults.loadBoundPeripheralUUID() {
+            // TODO: get peripheral and reconnect
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -28,8 +35,7 @@ class ViewController: UIViewController {
     // MARK - IBActions
     @IBAction func scan(sender: UIButton) {
         debugPrint("\(#function) sender: \(sender)")
-//        guard !cbCentralManager.isScanning else { return }
-//        scanMiBands()
+        scanMiBands()
     }
     
     @IBAction func stopScan(sender: UIButton) { // manually stop scanning
@@ -60,42 +66,15 @@ class ViewController: UIViewController {
         vibrateBtn.isEnabled = false
     }
     
-    /*
     func scanMiBands() {
-        discoveredPeripherals.removeAll()   // clear discovered peripherals
-        cbCentralManager.scanForPeripherals(withServices: Consts.miBandServiceUUIDs, options: nil)
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(Consts.scanDuration)) { [unowned self] in
-            var alert: UIAlertController? = nil
-            if self.discoveredPeripherals.count > 0 {
-                alert = UIAlertController(title: "Devices found", message: "Choose the device to pair with", preferredStyle: .actionSheet)
-                for peripheral in self.discoveredPeripherals {
-                    if let name = peripheral.name {
-                        alert!.addAction(
-                            UIAlertAction(title: name,
-                                          style: .default,
-                                          handler: { [unowned self] (action) in
-                                            self.cbCentralManager.connect(peripheral, options: Consts.peripheralConnOptions)
-                            }))
-                    }
-                }
-                alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
-                    print("\(action.title)")
-                }))
-            } else {
-                alert = UIAlertController(title: "Devices not found", message: "Devices not foud", preferredStyle: .actionSheet)
-                alert!.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
-            }
-            if let alert = alert {
-                self.present(alert, animated: true, completion: nil)
-            }
-            self.stopScan(sender: self.stopScanBtn)
-        }
+        miController?.scanMiBand()
     }
     
     
     
     
     
+    /*
     func createLatency(minConnInterval: Int, maxConnInterval: Int, latency: Int, timeout: Int, advertisementInterval: Int) -> Data {
         var bytes = [UInt8](repeating: 0, count: 12)
         bytes[0] = UInt8(truncatingBitPattern: minConnInterval)

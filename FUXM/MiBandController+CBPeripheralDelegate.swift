@@ -12,7 +12,7 @@ extension MiBandController: CBPeripheralDelegate {
     // MARK - CBPeripheralDelegate - Discovering services
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         debugPrint("\(#function) peripheral: \(peripheral) error: \(error)")
-        guard error != nil else {
+        guard nil == error else {
             // TODO fail callback
             return
         }
@@ -24,18 +24,19 @@ extension MiBandController: CBPeripheralDelegate {
         
         for service in services {
             peripheral.discoverCharacteristics(Consts.characteristics, for: service)
-            peripheral.discoverIncludedServices(nil, for: service)  // TEST
+            peripheral.discoverIncludedServices(nil, for: service)  // TEST: Got something for this. Dig deeper
         }
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverIncludedServicesFor service: CBService, error: Error?) {
         debugPrint("\(#function) peripheral: \(peripheral) service: \(service) error: \(error)")
+        peripheral.discoverCharacteristics(Consts.characteristics, for: service)
     }
     
     // MARK - CBPeripheralDelegate - Discovering characteristics and characteristics descriptors
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         debugPrint("\(#function) peripheral: \(peripheral) service: \(service) error: \(error)")
-        guard error != nil else {
+        guard nil == error else {
             // TODO fail callback
             return
         }
@@ -45,17 +46,19 @@ extension MiBandController: CBPeripheralDelegate {
             return
         }
         
+        debugPrint("characterstics: \(characteristics)")
         for characteristic in characteristics {
             characteristicsAvailable[FUCharacteristicUUID(rawValue: UInt16(characteristic.uuid.uuidString, radix: GlobalConsts.hexRadix)!)!] = characteristic    // TODO: crash due to receiving characteristic of UUID FED0
         }
         
+        // TODO: refactor..... 
         let gotAllCharacteristics = peripheral.services?.reduce(true, { (result, service) -> Bool in
             return result && (service.characteristics != nil)
         })
-        if let ready = gotAllCharacteristics, ready == true {
-            MiBandUserDefaults.storeBoundPeripheralUUID(peripheral.identifier)
-            boundPeripheral = peripheral
-            setupPeripheral()
+        if let ready = gotAllCharacteristics, true == ready {
+//            MiBandUserDefaults.storeBoundPeripheralUUID(peripheral.identifier)
+//            boundPeripheral = peripheral
+            setupPeripheral(peripheral)
         }
     }
     
@@ -66,13 +69,13 @@ extension MiBandController: CBPeripheralDelegate {
     // MARK - CBPeripheralDelegate - Retrieving characteristic and characteristic descriptor values
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         debugPrint("\(#function) peripheral: \(peripheral) characteristic: \(characteristic) error: \(error) value: \(characteristic.value)")
-        guard nil == error else {
-            debugPrint("Error occurred: \(error)")
-            return
-        }
-        if characteristic.isNotifying {
-            // TODO: handle notified value
-        }
+//        guard nil == error else {
+//            debugPrint("Error occurred: \(error)")
+//            return
+//        }
+//        if characteristic.isNotifying {
+//            // TODO: handle notified value
+//        }
         
         guard let converted = UInt16(characteristic.uuid.uuidString, radix:GlobalConsts.hexRadix),
             let uuid = FUCharacteristicUUID(rawValue: converted) else {
@@ -85,7 +88,7 @@ extension MiBandController: CBPeripheralDelegate {
             break
         case .deviceInfo:
             // TODO
-//            handleDeviceInfo(value: characteristic.value)
+            self.delegate?.onUpdateDeviceInfo?(deviceInfo: FUDeviceInfo(data: characteristic.value), isNotifiying: characteristic.isNotifying, error: error)
             break
         case .deviceName:
             // TODO
@@ -179,11 +182,11 @@ extension MiBandController: CBPeripheralDelegate {
     }
     
     // MARK - private methods
-    private func setupPeripheral() {
-        guard let boundPeripheral = self.boundPeripheral else {
-            assert(self.boundPeripheral != nil, "self.boundPeripheral == nil")
-            return
-        }
+    private func setupPeripheral(_ peripheral: CBPeripheral) {
+//        assert(nil != self.boundPeripheral, "self.boundPeripheral == nil")
+  
+        self.activePeripheral = peripheral
+        readDeviceInfo()
         
 /*
         boundPeripheral.setNotifyValue(true, for: characteristicsAvailable[.notification]!)

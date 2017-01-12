@@ -12,6 +12,7 @@ extension MiBandController: CBCentralManagerDelegate {
     // MARK - CBCentralManagerDelegate - monitoring connections with peripherals
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         debugPrint("\(#function) central: \(central), peripheral: \(peripheral)")
+        peripheral.delegate = self  // IMPORTANT: Must assign the delegate!
         peripheral.discoverServices(Consts.miBandServiceUUIDs)
     }
     
@@ -45,13 +46,13 @@ extension MiBandController: CBCentralManagerDelegate {
         switch central.state {
         case .poweredOn:
             // try to re-connect device if exists
-            if let boundPeripheralUUID = MiBandUserDefaults.loadBoundPeripheralUUID(),
-                let foundPeripheral = centralManager.retrievePeripherals(withIdentifiers: [boundPeripheralUUID]).first {
-                self.boundPeripheral = foundPeripheral    // need a strong ref to keep the peripheral
-                centralManager.connect(foundPeripheral)
-            } else {
-                debugPrint("Not re-connecting")
-            }
+//            if let boundPeripheralUUID = MiBandUserDefaults.loadBoundPeripheralUUID(),
+//                let foundPeripheral = centralManager.retrievePeripherals(withIdentifiers: [boundPeripheralUUID]).first {
+//                self.boundPeripheral = foundPeripheral    // need a strong ref to keep the peripheral
+//                centralManager.connect(foundPeripheral)
+//            } else {
+//                debugPrint("Not re-connecting")
+//            }
             break
         case .unknown, .resetting, .unsupported, .unauthorized, .poweredOff:
             debugPrint("\(central.state)")

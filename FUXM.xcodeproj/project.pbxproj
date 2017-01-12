@@ -21,6 +21,8 @@
 		E944DB1F1E273025006A5110 /* MiBandController+CBPeripheralDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB1E1E273025006A5110 /* MiBandController+CBPeripheralDelegate.swift */; };
 		E944DB231E275A97006A5110 /* FUUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB221E275A97006A5110 /* FUUserInfo.swift */; };
 		E944DB261E275AE2006A5110 /* FUDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB251E275AE2006A5110 /* FUDeviceInfo.swift */; };
+		E944DB281E278B16006A5110 /* ViewController+MiBandControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB271E278B16006A5110 /* ViewController+MiBandControllerDelegate.swift */; };
+		E944DB2A1E278CA4006A5110 /* MiBandController+MiBandControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB291E278CA4006A5110 /* MiBandController+MiBandControllerDelegate.swift */; };
 		E98E81B71E1A7B450062B9A0 /* FUDataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E81B61E1A7B450062B9A0 /* FUDataReader.swift */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +64,8 @@
 		E944DB1E1E273025006A5110 /* MiBandController+CBPeripheralDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MiBandController+CBPeripheralDelegate.swift"; sourceTree = "<group>"; };
 		E944DB221E275A97006A5110 /* FUUserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUUserInfo.swift; sourceTree = "<group>"; };
 		E944DB251E275AE2006A5110 /* FUDeviceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUDeviceInfo.swift; sourceTree = "<group>"; };
+		E944DB271E278B16006A5110 /* ViewController+MiBandControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+MiBandControllerDelegate.swift"; sourceTree = "<group>"; };
+		E944DB291E278CA4006A5110 /* MiBandController+MiBandControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MiBandController+MiBandControllerDelegate.swift"; sourceTree = "<group>"; };
 		E98E81B61E1A7B450062B9A0 /* FUDataReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FUDataReader.swift; path = Utilities/FUDataReader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,6 +122,7 @@
 				E98E81B21E1A456D0062B9A0 /* DataModels */,
 				E91641FE1DF840C300B89E8E /* AppDelegate.swift */,
 				E91642001DF840C300B89E8E /* ViewController.swift */,
+				E944DB271E278B16006A5110 /* ViewController+MiBandControllerDelegate.swift */,
 				E91642021DF840C300B89E8E /* Main.storyboard */,
 				E91642051DF840C300B89E8E /* Assets.xcassets */,
 				E91642071DF840C300B89E8E /* LaunchScreen.storyboard */,
@@ -149,6 +154,7 @@
 			children = (
 				E944DB201E2756A4006A5110 /* DataModels */,
 				E944DB1A1E272EE8006A5110 /* MiBandController+Enums.swift */,
+				E944DB291E278CA4006A5110 /* MiBandController+MiBandControllerDelegate.swift */,
 				E944DB161E271E4F006A5110 /* MiBandController.swift */,
 				E944DB1C1E272FFC006A5110 /* MiBandController+CBCentralManagerDelegate.swift */,
 				E944DB1E1E273025006A5110 /* MiBandController+CBPeripheralDelegate.swift */,
@@ -322,10 +328,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E944DB231E275A97006A5110 /* FUUserInfo.swift in Sources */,
+				E944DB281E278B16006A5110 /* ViewController+MiBandControllerDelegate.swift in Sources */,
 				E944DB171E271E4F006A5110 /* MiBandController.swift in Sources */,
 				E944DB1B1E272EE8006A5110 /* MiBandController+Enums.swift in Sources */,
 				E98E81B71E1A7B450062B9A0 /* FUDataReader.swift in Sources */,
 				E944DB1D1E272FFC006A5110 /* MiBandController+CBCentralManagerDelegate.swift in Sources */,
+				E944DB2A1E278CA4006A5110 /* MiBandController+MiBandControllerDelegate.swift in Sources */,
 				E944DB1F1E273025006A5110 /* MiBandController+CBPeripheralDelegate.swift in Sources */,
 				E91642011DF840C300B89E8E /* ViewController.swift in Sources */,
 				E944DB191E27202A006A5110 /* MiBandUserDefaults.swift in Sources */,
