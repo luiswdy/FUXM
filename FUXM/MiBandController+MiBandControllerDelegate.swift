@@ -15,4 +15,5 @@ import CoreBluetooth.CBPeripheral
     @objc optional func onDisconnected()
     @objc optional func onUpdateDeviceInfo(_ deviceInfo: FUDeviceInfo?, isNotifiying: Bool, error: Error?)
     @objc optional func onUpdateUserInfo(_ userInfo: FUUserInfo?, error: Error?)
+    @objc optional func onUpdateBatteryInfo(_ batteryInfo: FUBatteryInfo?, isNotifiying: Bool, error: Error?)
 }

@@ -31,13 +31,13 @@ class FUUserInfo: NSObject {
         static let aliasRange: Range<Data.Index> = 9..<19
     }
     
-    var uid: UInt32
-    var gender: FUGender
-    var age: UInt8
-    var height: UInt8
-    var weight: UInt8
-    var type: FUAuthType
-    var alias: String
+    private(set) var uid: UInt32
+    private(set) var gender: FUGender
+    private(set) var age: UInt8
+    private(set) var height: UInt8
+    private(set) var weight: UInt8
+    private(set) var type: FUAuthType
+    private(set) var alias: String
     
     override var debugDescription: String {
         return "uid: \(uid), "

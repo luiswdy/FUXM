@@ -211,4 +211,8 @@ extension MiBandController {
         getSensorData                       = 0x12,
         stopMotorVibrate                    = 0x13
     }
+    
+    enum PairCommand: UInt8 {
+        case pair = 0x2, unpair = 0xff // (or 0xfff? with UInt16?)
+    }
 }

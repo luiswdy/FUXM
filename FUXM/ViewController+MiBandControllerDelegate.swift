@@ -35,12 +35,16 @@ extension ViewController: MiBandControllerDelegate {
     
     func onUpdateDeviceInfo(_ deviceInfo: FUDeviceInfo?, isNotifiying: Bool, error: Error?) {
         // TODO
-        miController?.readUserInfo()    // TEST
+//        miController?.readUserInfo()    // TEST
         debugPrint("DEBUG - \(deviceInfo)")
     }
     
     func onUpdateUserInfo(_ userInfo: FUUserInfo?, error: Error?) {
         // TODO
         debugPrint("\(userInfo)")
+    }
+    
+    func onUpdateBatteryInfo(_ batteryInfo: FUBatteryInfo?, isNotifiying: Bool, error: Error?) {
+        debugPrint("\(batteryInfo)")
     }
 }

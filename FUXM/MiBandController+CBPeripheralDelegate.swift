@@ -86,6 +86,9 @@ extension MiBandController: CBPeripheralDelegate {
             debugPrint("Cannot convert incoming uuid \(characteristic.uuid). Abort")
             return
         }
+        
+        debugPrint("uuid gotten: \(uuid)")
+        
         switch uuid {
         case .alertLevel:
             // TODO
@@ -95,10 +98,13 @@ extension MiBandController: CBPeripheralDelegate {
             debugPrint("DEBUG - HERE")
             self.delegate?.onUpdateDeviceInfo?(FUDeviceInfo(data: characteristic.value), isNotifiying: characteristic.isNotifying, error: error)
             
-            // TEST
-            self.writeUserInfo(FUUserInfo(uid: 123, gender: .male, age: 36, height: 170, weight: 62, type: .normal, alias: "LUIS"), salt:0x3e)
-            self.readUserInfo()
-            
+            // TEST  ---- TRY HERE
+            if let deviceInfo = FUDeviceInfo(data: characteristic.value) {
+                self.writeUserInfo(FUUserInfo(uid: 123, gender: .male, age: 36, height: 170, weight: 62, type: .normal, alias: "LUIS"), salt:deviceInfo.salt)
+            }
+            self.readBatteryInfo()
+//            self.readUserInfo()
+            // END TEST
             break
         case .deviceName:
             // TODO
@@ -133,6 +139,7 @@ extension MiBandController: CBPeripheralDelegate {
             break
         case .battery:
 //            handleBatteryInfo(value: characteristic.value)
+            self.delegate?.onUpdateBatteryInfo?(FUBatteryInfo(data: characteristic.value), isNotifiying: characteristic.isNotifying, error: error)
             // TODO
             break
         case .test:
@@ -172,6 +179,15 @@ extension MiBandController: CBPeripheralDelegate {
     // MARK - CBPeripheralDelegate - Managing notifications for a characteristic's value
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         debugPrint("\(#function) peripheral: \(peripheral) characteristic: \(characteristic) error: \(error)")
+        
+        guard let converted = UInt16(characteristic.uuid.uuidString, radix:GlobalConsts.hexRadix),
+            let uuid = FUCharacteristicUUID(rawValue: converted) else {
+                debugPrint("Cannot convert incoming uuid \(characteristic.uuid). Abort")
+                return
+        }
+        
+        debugPrint("uuid gotten: \(uuid)")
+        
 //        handleNotifications(from: characteristic)
         // TODO: notif handler or notif callback?
     }

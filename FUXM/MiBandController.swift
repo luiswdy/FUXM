@@ -133,7 +133,7 @@ class MiBandController: NSObject {
     
     func writeUserInfo(_ userInfo: FUUserInfo, salt: UInt8) {
         guard let userInfoCharacteristic = characteristicsAvailable[.userInfo] else { return }
-        self.activePeripheral?.writeValue(userInfo.data(salt: 0x3e), for: userInfoCharacteristic, type: .withResponse)  // TODO: get actual salt
+        self.activePeripheral?.writeValue(userInfo.data(salt: salt), for: userInfoCharacteristic, type: .withResponse)
     }
     
     func vibrate(alertLevel: VibrationAlertLevel, ledColorForMildAlert: FULEDColor? = nil) {
@@ -151,7 +151,12 @@ class MiBandController: NSObject {
     
     func bindPeripheral(_ peripheral: CBPeripheral) {
         guard let pairCharacteristic = characteristicsAvailable[.pair] else { return }
-        self.activePeripheral?.writeValue(Data(bytes:[ 0x2 ]), for: pairCharacteristic, type: .withResponse)
+        self.activePeripheral?.writeValue(Data(bytes:[ PairCommand.pair.rawValue ]), for: pairCharacteristic, type: .withResponse)
+    }
+    
+    func readBatteryInfo() {
+        guard let batteryInfoCharacteristic = characteristicsAvailable[.battery] else { return }
+        self.activePeripheral?.readValue(for: batteryInfoCharacteristic)
     }
     
     // MARK - private methods

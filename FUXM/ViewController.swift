@@ -192,48 +192,6 @@ class ViewController: UIViewController {
         }
     }
     
-    func handleDeviceInfo(value: Data?) {
-        guard value != nil else { return }
-        
-        // TODO refactor
-        var uuid: [UInt8] = Array<UInt8>(repeatElement(0, count: value!.count))
-        value!.copyBytes(to: &uuid, count: value!.count)
-        var deviceId = ""
-        for byte in uuid[0...7] {
-            deviceId.append(String(format: "%02x", byte))
-        }
-        print("deviceId: \(deviceId)")
-        
-        
-        let testBytes = value!.subdata(in: 0..<8)
-        test = testBytes.withUnsafeBytes({ (pointer: UnsafePointer<Int32>) -> Int32 in
-            return pointer.pointee
-        })
-        
-        
-        // UInt8 11, 10, 9, 8 (profile version x.x.x.x)
-        var profileVersion = ""
-        for byte in uuid[8...11].reversed() {
-            profileVersion.append(String(format: uuid[8...11].reversed().index(of: byte) == 3 ? "%d" : "%d." , byte))
-        }
-        print("profileVersion: \(profileVersion)")
-        
-        // UInt8 15, 14, 13, 12 (firmawre version x.x.x.x)
-        var firmwareVersion = ""
-        for byte in uuid[12...15].reversed() {
-            firmwareVersion.append(String(format: uuid[12...15].reversed().index(of: byte) == 3 ? "%d" : "%d." , byte))
-            
-        }
-        print("firmwareVersion: \(firmwareVersion)")
-        
-        
-        let feature = Int(uuid[4])
-        let appearence = Int(uuid[5])
-        let hardwareVersion = Int(uuid[6])
-        print("feature:\(feature), appearance:\(appearence), hardwareversion:\(hardwareVersion)")
-        
-    
-    }
     
     func handleBatteryInfo(value: Data?) {
         guard value != nil else { return }
