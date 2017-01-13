@@ -33,7 +33,7 @@ extension ViewController: MiBandControllerDelegate {
         MiBandUserDefaults.storeBoundPeripheralUUID(peripheral.identifier)
     }
     
-    func onUpdateDeviceInfo(deviceInfo: FUDeviceInfo?, isNotifiying: Bool, error: Error?) {
+    func onUpdateDeviceInfo(_ deviceInfo: FUDeviceInfo?, isNotifiying: Bool, error: Error?) {
         // TODO
         miController?.readUserInfo()    // TEST
         debugPrint("DEBUG - \(deviceInfo)")
