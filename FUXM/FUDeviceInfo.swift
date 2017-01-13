@@ -8,16 +8,16 @@
 import Foundation
 
 class FUDeviceInfo: NSObject {
-    private(set) var deviceID: String
-    private(set) var mac: String
-    private(set) var salt: UInt8
-    private(set) var profileVer: String
-    private(set) var firmwareVer: String
+    let deviceID: String
+    let mac: String
+    let salt: UInt8
+    let profileVer: String
+    let firmwareVer: String
     let feature: UInt
     let appearance: UInt
     let hardwareVer: UInt
     
-    override var description: String {
+    override var debugDescription: String {
         return "deviceID: \(deviceID), "
             + "MAC: \(mac), "
             + "salt: \(salt), "
@@ -28,7 +28,7 @@ class FUDeviceInfo: NSObject {
             + "hardwareVer: \(hardwareVer)"
     }
 
-    struct Consts {
+    private struct Consts {
         static let deviceIDRange: Range<Data.Index> = 0..<7
         static let macFormatString = "%02x:%02x:%02x:%02x:%02x:%02x"
         static let fixedMACAddressSection2 = 0x0f

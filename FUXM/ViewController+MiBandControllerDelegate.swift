@@ -29,11 +29,18 @@ extension ViewController: MiBandControllerDelegate {
         }
     }
     
-    func onConnected() {
-        // TODO
+    func didConnectPeripheral(_ peripheral: CBPeripheral) {
+        MiBandUserDefaults.storeBoundPeripheralUUID(peripheral.identifier)
     }
     
     func onUpdateDeviceInfo(deviceInfo: FUDeviceInfo?, isNotifiying: Bool, error: Error?) {
-        debugPrint(deviceInfo)
+        // TODO
+        miController?.readUserInfo()    // TEST
+        debugPrint("DEBUG - \(deviceInfo)")
+    }
+    
+    func onUpdateUserInfo(_ userInfo: FUUserInfo?, error: Error?) {
+        // TODO
+        debugPrint("\(userInfo)")
     }
 }

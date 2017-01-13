@@ -13,6 +13,7 @@ extension MiBandController: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         debugPrint("\(#function) central: \(central), peripheral: \(peripheral)")
         peripheral.delegate = self  // IMPORTANT: Must assign the delegate!
+        delegate?.didConnectPeripheral(peripheral)
         peripheral.discoverServices(Consts.miBandServiceUUIDs)
     }
     

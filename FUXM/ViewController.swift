@@ -7,10 +7,12 @@
 //
 
 import UIKit
+import CoreBluetooth.CBPeripheral
 
 class ViewController: UIViewController {
     // MARK - properties
     var miController: MiBandController?
+    var activePeripheral: CBPeripheral?
     
     // MARK - Interface Builder outlets
     @IBOutlet var scanBtn: UIButton!
@@ -22,8 +24,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         enableButtons() // TEST
         miController = MiBandController(delegate: self)
-        if let boundPeripheralUUID = MiBandUserDefaults.loadBoundPeripheralUUID() {
-            // TODO: get peripheral and reconnect
+        if let boundPeripheralUUID = MiBandUserDefaults.loadBoundPeripheralUUID(),
+           let foundPeripheral = miController!.retrievePeripheral(withUUID: boundPeripheralUUID) {
+            activePeripheral = foundPeripheral
+            miController!.connect(activePeripheral!)
+//            miController!.readDeviceInfo()  // TODO: move to "when characteristics are ready"!!!
         }
     }
     
@@ -45,8 +50,7 @@ class ViewController: UIViewController {
     
     @IBAction func vibrate(sender: UIButton) {
         debugPrint("\(#function) sender: \(sender)")
-//        pairingPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 6, 0, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
-//        pairingPeripheral?.writeValue(Data(bytes:[1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)   // workable!
+        miController!.vibrate(alertLevel: .mildAlert, ledColorForMildAlert: FULEDColor(red: 6, green: 0, blue: 6))
     }
     
 
@@ -92,48 +96,7 @@ class ViewController: UIViewController {
         return Data(bytes: bytes)
     }
     
-    func createUserInfo(uid: Int32, gender: Int, age: Int, height: Int, weight: Int, type: Int, alias: String) -> Data {
-        var bytes: [UInt8] = []
-        bytes.append(UInt8(truncatingBitPattern: uid.bigEndian))
-        bytes.append(UInt8(truncatingBitPattern: uid.bigEndian >> 8))
-        bytes.append(UInt8(truncatingBitPattern: uid.bigEndian >> 16))
-        bytes.append(UInt8(truncatingBitPattern: uid.bigEndian >> 24))
-        bytes.append(UInt8(truncatingBitPattern: gender))
-        bytes.append(UInt8(truncatingBitPattern: age))
-        bytes.append(UInt8(truncatingBitPattern: height))
-        bytes.append(UInt8(truncatingBitPattern: weight))
-        bytes.append(UInt8(truncatingBitPattern: type))
-        bytes.append(contentsOf:Array(alias.utf8))
-        let paddingCount = 19 - bytes.count
-        if  paddingCount > 0  {
-            bytes.append(contentsOf: Array<UInt8>(repeating:UInt8(0), count:paddingCount))
-        }
-        bytes.append(checksum(bytes: bytes, from: 0, length: 19, lastMACByte:0x3E))  // 3E may from deviceInfo's last byte!
-        // TODO not mili 1
-        return Data(bytes: bytes)
-    }
-    
-    
-    func checksum(bytes: [UInt8],from index: Int, length: Int, lastMACByte: UInt8) -> UInt8 {
-        let input = Array<UInt8>(bytes[index ..< bytes.count])
-        let crc = crc8WithBytes(bytes: input, length: length)
-        return crc ^ 0xff & lastMACByte
-    }
-    
-    func crc8WithBytes(bytes: [UInt8], length: Int) -> UInt8 {
-        var checksum: UInt8 = 0
-        for i in 0 ..< length {
-         checksum ^= bytes[i]
-            for _ in 0 ..< 8 {
-                if (checksum & 0x1 as UInt8) > 0 {
-                    checksum = (0x8c ^ (0xff & checksum >> 1))
-                } else {
-                    checksum = (0xff & checksum >> 1)
-                }
-            }
-        }
-        return checksum
-    }
+
     
     func createDate(newerDate: Date, olderDate: Date? = nil) -> Data {
         var bytes: [UInt8] = []

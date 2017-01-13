@@ -59,7 +59,11 @@ extension MiBandController: CBPeripheralDelegate {
 //            MiBandUserDefaults.storeBoundPeripheralUUID(peripheral.identifier)
 //            boundPeripheral = peripheral
             setupPeripheral(peripheral)
+            // TEST
+            printPropertiesFor(characteristicsAvailable)
         }
+        
+        
     }
     
 //    func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
@@ -88,7 +92,13 @@ extension MiBandController: CBPeripheralDelegate {
             break
         case .deviceInfo:
             // TODO
-            self.delegate?.onUpdateDeviceInfo?(deviceInfo: FUDeviceInfo(data: characteristic.value), isNotifiying: characteristic.isNotifying, error: error)
+            debugPrint("DEBUG - HERE")
+            self.delegate?.onUpdateDeviceInfo?(FUDeviceInfo(data: characteristic.value), isNotifiying: characteristic.isNotifying, error: error)
+            
+            // TEST
+            self.writeUserInfo(FUUserInfo(uid: 123, gender: .male, age: 36, height: 170, weight: 62, type: .normal, alias: "LUIS"), salt:0x3e)
+            self.readUserInfo()
+            
             break
         case .deviceName:
             // TODO
@@ -98,6 +108,7 @@ extension MiBandController: CBPeripheralDelegate {
             break
         case .userInfo:
             // TODO
+            self.delegate?.onUpdateUserInfo?(FUUserInfo(data: characteristic.value), error: error)
             break
         case .controlPoint:
             // TODO
@@ -184,10 +195,9 @@ extension MiBandController: CBPeripheralDelegate {
     // MARK - private methods
     private func setupPeripheral(_ peripheral: CBPeripheral) {
 //        assert(nil != self.boundPeripheral, "self.boundPeripheral == nil")
-  
         self.activePeripheral = peripheral
         readDeviceInfo()
-        
+        bindPeripheral(peripheral)  // TEST
 /*
         boundPeripheral.setNotifyValue(true, for: characteristicsAvailable[.notification]!)
         let lowLatencyData = createLatency(minConnInterval: 39, maxConnInterval: 49, latency: 0, timeout: 500, advertisementInterval: 0)
@@ -241,5 +251,45 @@ extension MiBandController: CBPeripheralDelegate {
         
 //        boundPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 0, 0, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
     */
+    }
+    
+    private func printPropertiesFor(_ characteristicDict: [FUCharacteristicUUID : CBCharacteristic]) {
+        for key in characteristicDict.keys {
+            let characteristic = characteristicDict[key]!
+            print("Characteristic: \(key) - properties: [ " , terminator:"")
+            
+            // determine characteristic properties
+            if characteristic.properties.contains(.broadcast) {
+                print("broadcast ", terminator: "")
+            }
+            if characteristic.properties.contains(.read) {
+                print("read ", terminator: "")
+            }
+            if characteristic.properties.contains(.writeWithoutResponse) {
+                print("write-without-response ", terminator: "")
+            }
+            if characteristic.properties.contains(.write) {
+                print("write ", terminator: "")
+            }
+            if characteristic.properties.contains(.notify) {
+                print("notify ", terminator: "")
+            }
+            if characteristic.properties.contains(.indicate) {
+                print("indicate ", terminator: "")
+            }
+            if characteristic.properties.contains(.authenticatedSignedWrites) {
+                print("authenticated-signed-writes ", terminator: "")
+            }
+            if characteristic.properties.contains(.extendedProperties) {
+                print("extended-properties ", terminator: "")
+            }
+            if characteristic.properties.contains(.notifyEncryptionRequired) {
+                print("notify-encryption-required ", terminator: "")
+            }
+            if characteristic.properties.contains(.indicateEncryptionRequired) {
+                print("indicate-encryption-required ", terminator: "")
+            }
+            print("]" )   // end of line
+        }
     }
 }

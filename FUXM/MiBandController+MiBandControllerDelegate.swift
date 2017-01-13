@@ -9,9 +9,10 @@ import Foundation
 import CoreBluetooth.CBPeripheral
 
 @objc protocol MiBandControllerDelegate {
-    func onConnected()
+    func didConnectPeripheral(_ peripheral: CBPeripheral)
     func onMiBandsDiscovered(peripherals: [CBPeripheral])
     
     @objc optional func onDisconnected()
-    @objc optional func onUpdateDeviceInfo(deviceInfo: FUDeviceInfo?, isNotifiying: Bool, error: Error?)
+    @objc optional func onUpdateDeviceInfo(_ deviceInfo: FUDeviceInfo?, isNotifiying: Bool, error: Error?)
+    @objc optional func onUpdateUserInfo(_ userInfo: FUUserInfo?, error: Error?)
 }
