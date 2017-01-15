@@ -194,16 +194,16 @@ extension MiBandController {
     
     enum ControlPointCommand: UInt8 {
         case
-        setHeartRateSleep                   = 0x0,
-        setHeartRateContinuous              = 0x1,
-        setHeartRateManual                  = 0x2,
-        setRealtimeStepNotification         = 0x3,
+//        setHeartRateSleep                   = 0x0,
+//        setHeartRateContinuous              = 0x1,
+//        setHeartRateManual                  = 0x2,
+//        setRealtimeStepNotification         = 0x3,
         setTimer                            = 0x4,
         setFitnessGoal                      = 0x5,
         fetchData                           = 0x6,
         firmwareInfo                        = 0x7,
         sendNotification                    = 0x8,
-        factoryReset                        = 0x9,
+//        factoryReset                        = 0x9,
         confirmActivityDataTransferComplete = 0xa,
         sync                                = 0xb,
         reboot                              = 0xc,
