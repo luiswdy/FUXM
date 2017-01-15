@@ -7,6 +7,7 @@
 //
 
 import CoreBluetooth.CBCentralManager
+import AudioToolbox //TEST
 
 extension MiBandController: CBCentralManagerDelegate {
     // MARK - CBCentralManagerDelegate - monitoring connections with peripherals
@@ -47,13 +48,12 @@ extension MiBandController: CBCentralManagerDelegate {
         switch central.state {
         case .poweredOn:
             // try to re-connect device if exists
-//            if let boundPeripheralUUID = MiBandUserDefaults.loadBoundPeripheralUUID(),
-//                let foundPeripheral = centralManager.retrievePeripherals(withIdentifiers: [boundPeripheralUUID]).first {
-//                self.boundPeripheral = foundPeripheral    // need a strong ref to keep the peripheral
-//                centralManager.connect(foundPeripheral)
-//            } else {
-//                debugPrint("Not re-connecting")
-//            }
+//            if let boundPeripheral = boundPeripheral {
+            if let activePeripheral = activePeripheral {    // TODO boundPeripheral uuid  to reconnect?
+                central.connect(activePeripheral)
+            } else {
+                debugPrint("Not re-connecting")
+            }
             break
         case .unknown, .resetting, .unsupported, .unauthorized, .poweredOff:
             debugPrint("\(central.state)")
@@ -63,9 +63,15 @@ extension MiBandController: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
-        let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey];
+        let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as! [CBPeripheral];
         let services = dict[CBCentralManagerRestoredStateScanServicesKey];
         let scanOptions = dict[CBCentralManagerRestoredStateScanOptionsKey];
         debugPrint("\(#function) central: \(central), dict:\(dict), peripherals: \(peripherals), services: \(services), scanOptions:\(scanOptions)")
+        
+        // reconnect here
+        if let peripheral = peripherals.first {
+            central.connect(peripheral, options: Consts.peripheralConnOptions)
+        }
+        
     }
 }

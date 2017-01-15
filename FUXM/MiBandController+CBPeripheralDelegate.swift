@@ -48,7 +48,11 @@ extension MiBandController: CBPeripheralDelegate {
         
         debugPrint("characterstics: \(characteristics)")
         for characteristic in characteristics {
-            characteristicsAvailable[FUCharacteristicUUID(rawValue: UInt16(characteristic.uuid.uuidString, radix: GlobalConsts.hexRadix)!)!] = characteristic    // TODO: crash due to receiving characteristic of UUID FED0
+            if let uuid = FUCharacteristicUUID(rawValue: UInt16(characteristic.uuid.uuidString, radix: GlobalConsts.hexRadix)!) {
+                characteristicsAvailable[uuid] = characteristic    // TODO: crash due to receiving characteristic of UUID FED0 1, 2, 3 (mi band 2)
+            } else {
+                debugPrint("DEBUG - got characteristic with uuid: \(characteristic.uuid.uuidString)")
+            }
         }
         
         // TODO: refactor..... 
@@ -96,13 +100,30 @@ extension MiBandController: CBPeripheralDelegate {
         case .deviceInfo:
             // TODO
             debugPrint("DEBUG - HERE")
-            self.delegate?.onUpdateDeviceInfo?(FUDeviceInfo(data: characteristic.value), isNotifiying: characteristic.isNotifying, error: error)
+            self.delegate?.onUpdateDeviceInfo?(FUDeviceInfo(data: characteristic.value), isNotifying: characteristic.isNotifying, error: error)
             
+            self.setNotify(enable: true, characteristic: .notification)
             // TEST  ---- TRY HERE
             if let deviceInfo = FUDeviceInfo(data: characteristic.value) {
                 self.writeUserInfo(FUUserInfo(uid: 123, gender: .male, age: 36, height: 170, weight: 62, type: .normal, alias: "LUIS"), salt:deviceInfo.salt)
             }
-            self.readBatteryInfo()
+            
+            self.setNotify(enable: true, characteristic: .sensorData)
+            self.startSensorData()
+            
+//            self.readSensorData()
+            
+            // good combination!
+//            self.setNotify(enable: true, characteristic: .notification)
+//            self.setNotify(enable: true, characteristic: .activityData)
+            
+            
+//            self.setNotify(enable: true, characteristic: .sensorData)
+            
+//            self.writeLEParams(FULEParams.lowLatencyLEParams())
+//            self.readLEParams()
+//            self.writeDateTime(Date())  // write won't didUpdate datetime
+//            self.readDateTime()
 //            self.readUserInfo()
             // END TEST
             break
@@ -129,17 +150,17 @@ extension MiBandController: CBPeripheralDelegate {
             // TODO
             break
         case .leParams:
-            // TODO
+            self.delegate?.onUpdateLEParams?(FULEParams(data: characteristic.value), isNotifying: characteristic.isNotifying, error: error)
             break
         case .dateTime:
-            // TODO
+            self.delegate?.onUpdateDateTime?(FUDateTime(data: characteristic.value), error: error)
             break
         case .statistics:
             // TODO
             break
         case .battery:
 //            handleBatteryInfo(value: characteristic.value)
-            self.delegate?.onUpdateBatteryInfo?(FUBatteryInfo(data: characteristic.value), isNotifiying: characteristic.isNotifying, error: error)
+            self.delegate?.onUpdateBatteryInfo?(FUBatteryInfo(data: characteristic.value), isNotifying: characteristic.isNotifying, error: error)
             // TODO
             break
         case .test:
@@ -147,13 +168,16 @@ extension MiBandController: CBPeripheralDelegate {
             break
         case .sensorData:
             // TODO
+            self.delegate?.onUpdateSensorData?(FUSensorData(data: characteristic.value), isNotifying: characteristic.isNotifying, error: error)
 //            handleSensorData(value: characteristic.value)
             break
         case .pair:
             // TODO
             break
         case .unknown1, .unknown2, .unknown3, .unknown4, .unknown5,
-             .unknown6, .unknown7, .unknown8, .unknown9, .unknown10, .weird:
+             .unknown6, .unknown7, .unknown8, .unknown9, .unknown10,
+             .unknown11, .unknown12,
+             .weird:
             debugPrint("unknown characteristics. value \(characteristic.value)")
             break
         }
@@ -214,6 +238,8 @@ extension MiBandController: CBPeripheralDelegate {
         self.activePeripheral = peripheral
         readDeviceInfo()
         bindPeripheral(peripheral)  // TEST
+        
+        
 /*
         boundPeripheral.setNotifyValue(true, for: characteristicsAvailable[.notification]!)
         let lowLatencyData = createLatency(minConnInterval: 39, maxConnInterval: 49, latency: 0, timeout: 500, advertisementInterval: 0)

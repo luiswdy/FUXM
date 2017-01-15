@@ -159,5 +159,54 @@ class MiBandController: NSObject {
         self.activePeripheral?.readValue(for: batteryInfoCharacteristic)
     }
     
+    func readLEParams() {
+        guard let leParamsCharacteristic = characteristicsAvailable[.leParams] else { return }
+        self.activePeripheral?.readValue(for: leParamsCharacteristic)
+    }
+    
+    func writeLEParams(_ leParams: FULEParams) {
+        guard let leParamsCharacteristic = characteristicsAvailable[.leParams] else { return }
+        self.activePeripheral?.writeValue(leParams.data(), for: leParamsCharacteristic, type: .withResponse)
+    }
+    
+    func readDateTime() {
+        guard let dateTimeCharacteristic = characteristicsAvailable[.dateTime] else { return }
+        self.activePeripheral?.readValue(for: dateTimeCharacteristic)
+    }
+    
+    func writeDateTime(_ date: Date) {
+        guard let dateTimeCharacteristic = characteristicsAvailable[.dateTime] else { return }
+        var data = FUDateTime(date: date).data()
+        data.append(FUDateTime().data())
+        self.activePeripheral?.writeValue(data, for: dateTimeCharacteristic, type: .withResponse)
+    }
+    
+    func writeDateTime(newerDate: FUDateTime, olderDate: FUDateTime) {
+        guard let dateTimeCharacteristic = characteristicsAvailable[.dateTime] else { return }
+        var data = newerDate.data()
+        data.append(olderDate.data())
+        self.activePeripheral?.writeValue(data, for: dateTimeCharacteristic, type: .withResponse)
+    }
+    
+    func setNotify(enable: Bool, characteristic: FUCharacteristicUUID) {
+        guard FUCharacteristicUUID.notifiableCharacteristics.contains(characteristic), let notifyCharacteristic = characteristicsAvailable[characteristic] else { return }
+        self.activePeripheral?.setNotifyValue(enable, for: notifyCharacteristic)
+    }
+    
+    func readSensorData() {
+        guard let sensorDataCharacteristic = characteristicsAvailable[.sensorData] else { return }
+        self.activePeripheral?.writeValue(Data(bytes: [1]), for: sensorDataCharacteristic, type: .withResponse)
+        self.activePeripheral?.readValue(for: sensorDataCharacteristic)
+    }
+    
+    func startSensorData() {    // for notify sensor data
+        guard let sensorDataCharacteristic = characteristicsAvailable[.sensorData] else { return }
+        self.activePeripheral?.writeValue(Data(bytes: [1]), for: sensorDataCharacteristic, type: .withResponse)
+    }
+    
+    func readActivityData() {
+        guard let activityDataCharacteristic = characteristicsAvailable[.activityData] else { return }
+        self.activePeripheral?.readValue(for: activityDataCharacteristic)
+    }
     // MARK - private methods
 }

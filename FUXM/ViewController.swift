@@ -23,7 +23,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         enableButtons() // TEST
-        miController = MiBandController(delegate: self)
+//        miController = MiBandController(delegate: self)   // TEST
         if let boundPeripheralUUID = MiBandUserDefaults.loadBoundPeripheralUUID(),
            let foundPeripheral = miController!.retrievePeripheral(withUUID: boundPeripheralUUID) {
             activePeripheral = foundPeripheral
@@ -74,29 +74,7 @@ class ViewController: UIViewController {
         miController?.scanMiBand()
     }
     
-    
-    
-    
-    
     /*
-    func createLatency(minConnInterval: Int, maxConnInterval: Int, latency: Int, timeout: Int, advertisementInterval: Int) -> Data {
-        var bytes = [UInt8](repeating: 0, count: 12)
-        bytes[0] = UInt8(truncatingBitPattern: minConnInterval)
-        bytes[1] = UInt8(truncatingBitPattern: minConnInterval >> 8)
-        bytes[2] = UInt8(truncatingBitPattern: maxConnInterval)
-        bytes[3] = UInt8(truncatingBitPattern: maxConnInterval >> 8)
-        bytes[4] = UInt8(truncatingBitPattern: latency)
-        bytes[5] = UInt8(truncatingBitPattern: latency >> 8)
-        bytes[6] = UInt8(truncatingBitPattern: timeout)
-        bytes[7] = UInt8(truncatingBitPattern: timeout >> 8)
-        bytes[8] = 0
-        bytes[9] = 0
-        bytes[10] = UInt8(truncatingBitPattern: advertisementInterval)
-        bytes[11] = UInt8(truncatingBitPattern: advertisementInterval >> 8)
-        return Data(bytes: bytes)
-    }
-    
-
     
     func createDate(newerDate: Date, olderDate: Date? = nil) -> Data {
         var bytes: [UInt8] = []
@@ -190,46 +168,6 @@ class ViewController: UIViewController {
                 break
             }
         }
-    }
-    
-    
-    func handleBatteryInfo(value: Data?) {
-        guard value != nil else { return }
-        
-        let levelData = value!.subdata(in: 0..<1)
-        let lastChargeData = value!.subdata(in: 1..<7)
-        let chargesCountData = value!.subdata(in: 7..<9)
-        let statusData = value!.subdata(in: 9..<10)
-        
-        debugPrint("levelData: \(levelData), lastChargeData: \(lastChargeData), chargesCountData: \(chargesCountData), statusData: \(statusData)")
-        
-        let level = levelData.withUnsafeBytes { (pointer: UnsafePointer<UInt8>) -> UInt8 in
-            return pointer.pointee
-        }
-//        let chargesCount = chargesCountData.withUnsafeBytes { (pointer: UnsafePointer<UInt16>) -> UInt16 in
-        let chargesCount = chargesCountData.withUnsafeBytes { (pointer: UnsafePointer<[UInt8]>) -> UInt16 in
-//            return pointer.pointee
-            return pointer.withMemoryRebound(to: UInt16.self, capacity: 2, { (pointer: UnsafePointer<UInt16>) -> UInt16 in
-                return pointer.pointee
-            })
-        }
-        let status = statusData.withUnsafeBytes { (pointer: UnsafePointer<UInt8>) -> UInt8 in
-            return pointer.pointee
-        }
-        let lastCharge = lastChargeData.withUnsafeBytes { (pointer: UnsafePointer<UInt8>) -> Date in
-            let calendar = Calendar(identifier: .gregorian)
-            let timeZone = TimeZone(secondsFromGMT: 0)
-            var dateComponents = DateComponents(calendar: calendar, timeZone: timeZone)
-            dateComponents.year = 2000 + Int(pointer.pointee)
-            print("\(pointer.pointee)")
-            dateComponents.month = 1 + Int(pointer.advanced(by: 1).pointee)
-            dateComponents.day = Int(pointer.advanced(by: 2).pointee)
-            dateComponents.hour = Int(pointer.advanced(by: 3).pointee)
-            dateComponents.minute = Int(pointer.advanced(by: 4).pointee)
-            dateComponents.second = Int(pointer.advanced(by: 5).pointee)
-            return dateComponents.date!
-        }
-        debugPrint("level: \(level), lastCharge: \(lastCharge), chargesCount: \(chargesCount), status: \(BatteryStatus(rawValue: status)!)")
     }
     
     func handleSensorData(value: Data?) {

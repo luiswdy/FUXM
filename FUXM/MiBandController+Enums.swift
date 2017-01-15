@@ -53,7 +53,9 @@ extension MiBandController {
         unknown7        = 0xfee3,
         unknown8        = 0xfec7,  // characteristics of unknown service
         unknown9        = 0xfec8,
-        unknown10       = 0xfec9
+        unknown10       = 0xfec9,
+        unknown11       = 0xfed0,
+        unknown12       = 0xfed1
         
         // characteristics - IAS
         static let iasCharacteristics = [alertLevel]
@@ -83,6 +85,7 @@ extension MiBandController {
             + FUCharacteristicUUID.miBandCharacteristicKeys
             + FUCharacteristicUUID.miBand2CharacteristicKeys
             + FUCharacteristicUUID.unknownCharacteristicKeys
+        static let notifiableCharacteristics = [ notification, realtimeSteps, activityData, battery, sensorData, leParams ]
         
     }
     

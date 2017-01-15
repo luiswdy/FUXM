@@ -1,4 +1,4 @@
-//
+    //
 //  ViewController+MiBandControllerDelegate.swift
 //  FUXM
 //
@@ -33,7 +33,7 @@ extension ViewController: MiBandControllerDelegate {
         MiBandUserDefaults.storeBoundPeripheralUUID(peripheral.identifier)
     }
     
-    func onUpdateDeviceInfo(_ deviceInfo: FUDeviceInfo?, isNotifiying: Bool, error: Error?) {
+    func onUpdateDeviceInfo(_ deviceInfo: FUDeviceInfo?, isNotifying: Bool, error: Error?) {
         // TODO
 //        miController?.readUserInfo()    // TEST
         debugPrint("DEBUG - \(deviceInfo)")
@@ -44,7 +44,21 @@ extension ViewController: MiBandControllerDelegate {
         debugPrint("\(userInfo)")
     }
     
-    func onUpdateBatteryInfo(_ batteryInfo: FUBatteryInfo?, isNotifiying: Bool, error: Error?) {
+    func onUpdateBatteryInfo(_ batteryInfo: FUBatteryInfo?, isNotifying: Bool, error: Error?) {
         debugPrint("\(batteryInfo)")
     }
+    
+    func onUpdateLEParams(_ leParams: FULEParams?, isNotifying: Bool, error: Error?) {
+        debugPrint("\(leParams)")
+    }
+    
+    func onUpdateDateTime(_ dateTime: FUDateTime?, error: Error?) {
+        // TODO
+        debugPrint("\(dateTime)")
+    }
+    
+    func onUpdateSensorData(_ sensorData: FUSensorData?, isNotifying: Bool, error: Error?) {
+        debugPrint("\(sensorData)")
+    }
+    
 }

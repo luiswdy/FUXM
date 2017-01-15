@@ -16,6 +16,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // TEST
+        let test = self.window!.rootViewController! as! ViewController
+        test.miController = MiBandController(delegate: test)
+        
         return true
     }
 
