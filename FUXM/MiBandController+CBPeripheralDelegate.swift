@@ -55,13 +55,13 @@ extension MiBandController: CBPeripheralDelegate {
             }
         }
         
-        // TODO: refactor..... 
+        // TODO: refactor.....
         let gotAllCharacteristics = peripheral.services?.reduce(true, { (result, service) -> Bool in
             return result && (service.characteristics != nil)
         })
         if let ready = gotAllCharacteristics, true == ready {
-//            MiBandUserDefaults.storeBoundPeripheralUUID(peripheral.identifier)
-//            boundPeripheral = peripheral
+            //            MiBandUserDefaults.storeBoundPeripheralUUID(peripheral.identifier)
+            //            boundPeripheral = peripheral
             setupPeripheral(peripheral)
             // TEST
             printPropertiesFor(characteristicsAvailable)
@@ -70,25 +70,25 @@ extension MiBandController: CBPeripheralDelegate {
         
     }
     
-//    func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
-//        debugPrint("\(#function) peripheral: \(peripheral) characteristic: \(characteristic) error: \(error)")
-//    }
+    //    func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
+    //        debugPrint("\(#function) peripheral: \(peripheral) characteristic: \(characteristic) error: \(error)")
+    //    }
     
     // MARK - CBPeripheralDelegate - Retrieving characteristic and characteristic descriptor values
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         debugPrint("\(#function) peripheral: \(peripheral) characteristic: \(characteristic) error: \(error) value: \(characteristic.value)")
-//        guard nil == error else {
-//            debugPrint("Error occurred: \(error)")
-//            return
-//        }
-//        if characteristic.isNotifying {
-//            // TODO: handle notified value
-//        }
+        //        guard nil == error else {
+        //            debugPrint("Error occurred: \(error)")
+        //            return
+        //        }
+        //        if characteristic.isNotifying {
+        //            // TODO: handle notified value
+        //        }
         
         guard let converted = UInt16(characteristic.uuid.uuidString, radix:GlobalConsts.hexRadix),
             let uuid = FUCharacteristicUUID(rawValue: converted) else {
-            debugPrint("Cannot convert incoming uuid \(characteristic.uuid). Abort")
-            return
+                debugPrint("Cannot convert incoming uuid \(characteristic.uuid). Abort")
+                return
         }
         
         debugPrint("uuid gotten: \(uuid)")
@@ -102,29 +102,31 @@ extension MiBandController: CBPeripheralDelegate {
             debugPrint("DEBUG - HERE")
             self.delegate?.onUpdateDeviceInfo?(FUDeviceInfo(data: characteristic.value), isNotifying: characteristic.isNotifying, error: error)
             
-//            self.setNotify(enable: true, characteristic: .notification)
+            self.setNotify(enable: true, characteristic: .notification)
             // TEST  ---- TRY HERE
             if let deviceInfo = FUDeviceInfo(data: characteristic.value) {
                 self.writeUserInfo(FUUserInfo(uid: 123, gender: .male, age: 36, height: 170, weight: 62, type: .normal, alias: "LUIS"), salt:deviceInfo.salt)
             }
             
-//            self.setNotify(enable: true, characteristic: .sensorData)
-//            self.startSensorData()
+            //            self.setNotify(enable: true, characteristic: .sensorData)
+            //            self.startSensorData()
             
-//            self.readSensorData()
+            //            self.readSensorData()
             
             // good combination!
-            self.setNotify(enable: true, characteristic: .notification)
-            self.setNotify(enable: true, characteristic: .activityData)
+            //            self.setNotify(enable: true, characteristic: .notification)
+            //            self.setNotify(enable: true, characteristic: .activityData)
+            
+            //            self.reboot()
             
             
-//            self.setNotify(enable: true, characteristic: .sensorData)
+            //            self.setNotify(enable: true, characteristic: .sensorData)
             
-//            self.writeLEParams(FULEParams.lowLatencyLEParams())
-//            self.readLEParams()
-//            self.writeDateTime(Date())  // write won't didUpdate datetime
-//            self.readDateTime()
-//            self.readUserInfo()
+            //            self.writeLEParams(FULEParams.lowLatencyLEParams())
+            //            self.readLEParams()
+            //            self.writeDateTime(Date())  // write won't didUpdate datetime
+            //            self.readDateTime()
+            //            self.readUserInfo()
             // END TEST
             break
         case .deviceName:
@@ -159,7 +161,7 @@ extension MiBandController: CBPeripheralDelegate {
             // TODO
             break
         case .battery:
-//            handleBatteryInfo(value: characteristic.value)
+            //            handleBatteryInfo(value: characteristic.value)
             self.delegate?.onUpdateBatteryInfo?(FUBatteryInfo(data: characteristic.value), isNotifying: characteristic.isNotifying, error: error)
             // TODO
             break
@@ -169,7 +171,7 @@ extension MiBandController: CBPeripheralDelegate {
         case .sensorData:
             // TODO
             self.delegate?.onUpdateSensorData?(FUSensorData(data: characteristic.value), isNotifying: characteristic.isNotifying, error: error)
-//            handleSensorData(value: characteristic.value)
+            //            handleSensorData(value: characteristic.value)
             break
         case .pair:
             // TODO
@@ -195,10 +197,10 @@ extension MiBandController: CBPeripheralDelegate {
         // TODO: maybe did write call back?
     }
     
-//    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
-//        debugPrint("\(#function) peripheral: \(peripheral) descriptor: \(descriptor) error: \(error)")
-//        
-//    }
+    //    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
+    //        debugPrint("\(#function) peripheral: \(peripheral) descriptor: \(descriptor) error: \(error)")
+    //
+    //    }
     
     // MARK - CBPeripheralDelegate - Managing notifications for a characteristic's value
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
@@ -210,11 +212,22 @@ extension MiBandController: CBPeripheralDelegate {
                 return
         }
         
-    debugPrint("uuid gotten: \(uuid)")
+        debugPrint("uuid gotten: \(uuid)")
+        
+        switch uuid {
+        case .notification:
+            // TODO
+            break
+        case .realtimeSteps:
+            debugPrint("realtimeSteps: \(characteristic.value)")
+        default:
+            debugPrint("uuid: \(uuid). Simply ignore.")
+            break
+        }
         
         
         if characteristic == characteristicsAvailable[.notification] {
-            
+            `
         } else if characteristic == characteristicsAvailable[.realtimeSteps] {
             
         } else if characteristic == characteristicsAvailable[.activityData] {
@@ -223,7 +236,7 @@ extension MiBandController: CBPeripheralDelegate {
                 return
             }
             assert(self.activityDataReader != nil, "Unexpected activityDataReader == nil")
-            guard let value = characteristic.value else {
+            guard let value = characteristic.value, value.count > 0 else {
                 debugPrint("Got empty value. Skipped")
                 return
             }
@@ -239,7 +252,7 @@ extension MiBandController: CBPeripheralDelegate {
         }
         
         
-//        handleNotifications(from: characteristic)
+        //        handleNotifications(from: characteristic)
         // TODO: notif handler or notif callback?
     }
     
@@ -261,65 +274,23 @@ extension MiBandController: CBPeripheralDelegate {
     
     // MARK - private methods
     private func setupPeripheral(_ peripheral: CBPeripheral) {
-//        assert(nil != self.boundPeripheral, "self.boundPeripheral == nil")
+        //        assert(nil != self.boundPeripheral, "self.boundPeripheral == nil")
         self.activePeripheral = peripheral
         readDeviceInfo()
-        bindPeripheral(peripheral)  // TEST
         
+        setNotify(enable: true, characteristic: .notification)
+        writeLEParams(FULEParams.lowLatencyLEParams())
+        bindPeripheral(self.activePeripheral!)
+        boundPeripheral = self.activePeripheral!
+        setWearPosition(position: .leftHand)
+        setFitnessGoal(steps: 10000)
         
-/*
-        boundPeripheral.setNotifyValue(true, for: characteristicsAvailable[.notification]!)
-        let lowLatencyData = createLatency(minConnInterval: 39, maxConnInterval: 49, latency: 0, timeout: 500, advertisementInterval: 0)
-        boundPeripheral.writeValue(lowLatencyData, for: characteristicsAvailable[CharacteristicUUID.leParams]!, type: .withResponse)
-        boundPeripheral.readValue(for: characteristicsAvailable[CharacteristicUUID.dateTime]!)
-        boundPeripheral.writeValue(Data(bytes:[0x2]), for: characteristicsAvailable[CharacteristicUUID.pair]!, type: .withResponse)
-        boundPeripheral.readValue(for: characteristicsAvailable[CharacteristicUUID.deviceInfo]!)
-        let userInfo = createUserInfo(uid: test, gender: 1, age: 36, height: 170, weight: 64, type: 1, alias: "Luis")
-//        let userInfo = Data(bytes: [0x73, 0xdc, 0x32, 0x0, 0x2, 0x19, 0xaf, 0x46, 0x0, 0x6c, 0x75, 0x69, 0x73, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x25]) // HERE! the user info format
-        boundPeripheral.writeValue(userInfo, for: characteristicsAvailable[CharacteristicUUID.userInfo]!, type: .withResponse)
-        
-        boundPeripheral.readValue(for: characteristicsAvailable[.userInfo]!)
-        
-        // check authentication needed
-        
-        boundPeripheral.writeValue(Data(bytes:[ControlPointCommand.setWearPosition.rawValue, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
-        
-        // setHeartrateSleepSupport (may not apply)
-        
-        boundPeripheral.writeValue(Data(bytes:[ControlPointCommand.setFitnessGoal.rawValue, 0x0, UInt8(truncatingBitPattern: 10000), UInt8(truncatingBitPattern: 10000 >> 8)]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
-        
-        boundPeripheral.setNotifyValue(true, for: characteristicsAvailable[.realtimeSteps]!)
-        boundPeripheral.setNotifyValue(true, for: characteristicsAvailable[.activityData]!)
-        boundPeripheral.setNotifyValue(true, for: characteristicsAvailable[.battery]!)
-        boundPeripheral.setNotifyValue(true, for: characteristicsAvailable[.sensorData]!)
-        
-        let nowData = createDate(newerDate: Date())
-        boundPeripheral.writeValue(nowData, for: characteristicsAvailable[.dateTime]!, type: .withResponse)
-        boundPeripheral.readValue(for: characteristicsAvailable[.battery]!)
-        let highLatencyData = createLatency(minConnInterval: 460, maxConnInterval: 500, latency: 0, timeout: 500, advertisementInterval: 0)
-        boundPeripheral?.writeValue(highLatencyData, for: characteristicsAvailable[CharacteristicUUID.leParams]!, type: .withResponse)
-        
-        // TODO : set initialized
-        */
-        
-        
-        
-        /*
-        
-//        boundPeripheral?.readValue(for: characteristicsAvailable[CharacteristicUUID.userInfo]!)
-        // TEST
-        
-//        boundPeripheral?.writeValue(Data(bytes:[ControlPointCommand.sendNotification.rawValue, 1]), for: characteristicsAvailable[CharacteristicUUID.controlPoint]!, type: .withoutResponse)
-//        boundPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 6, 0, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
-//        boundPeripheral?.writeValue(Data(bytes:[0x1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
-        
-        boundPeripheral.writeValue(Data(bytes:[0x12, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
-        
-        boundPeripheral.readValue(for: characteristicsAvailable[.sensorData]!)
-        
-        
-//        boundPeripheral?.writeValue(Data(bytes:[ControlPointCommand.setLEDColor.rawValue, 0, 0, 6, 1]), for: characteristicsAvailable[.controlPoint]!, type: .withResponse)
-    */
+        setNotify(enable: true, characteristic: .realtimeSteps)
+        setNotify(enable: true, characteristic: .activityData)
+        setNotify(enable: true, characteristic: .battery)
+//        setNotify(enable: true, characteristic: .sensorData)
+        writeDateTime(Date())
+        writeLEParams(FULEParams.highLatencyLEParams())
     }
     
     private func printPropertiesFor(_ characteristicDict: [FUCharacteristicUUID : CBCharacteristic]) {

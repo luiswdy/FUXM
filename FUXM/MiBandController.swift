@@ -20,6 +20,10 @@ enum VibrationAlertLevel: UInt8 {
     vibrateOnly = 0x4
 }
 
+enum FUWearPosition: UInt8 {
+    case leftHand = 0, rightHand
+}
+
 class FULEDColor {
     private static let minValue: UInt8 = 0
     private static let maxValue: UInt8 = 6
@@ -190,8 +194,8 @@ class MiBandController: NSObject {
     }
     
     func setNotify(enable: Bool, characteristic: FUCharacteristicUUID) {
-        guard FUCharacteristicUUID.notifiableCharacteristics.contains(characteristic), let notifyCharacteristic = characteristicsAvailable[characteristic] else { return }
-        self.activityDataReader = FUActivityReader()
+        guard let notifyCharacteristic = characteristicsAvailable[characteristic] else { return }
+        if characteristic == .activityData { self.activityDataReader = FUActivityReader() }
         self.activePeripheral?.setNotifyValue(enable, for: notifyCharacteristic)
     }
     
@@ -209,6 +213,21 @@ class MiBandController: NSObject {
     func readActivityData() {
         guard let activityDataCharacteristic = characteristicsAvailable[.activityData] else { return }
         self.activePeripheral?.readValue(for: activityDataCharacteristic)
+    }
+    
+    func reboot() {
+        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
+        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.reboot.rawValue]), for: controlPointCharacteristic, type: .withResponse)
+    }
+    
+    func setWearPosition(position: FUWearPosition) {
+        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
+        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.setWearPosition.rawValue, position.rawValue]), for: controlPointCharacteristic, type: .withResponse)
+    }
+    
+    func setFitnessGoal(steps: UInt16) {
+        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
+        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.setFitnessGoal.rawValue, 0x0, UInt8(truncatingBitPattern: steps), UInt8(truncatingBitPattern: steps >> 8)]), for: controlPointCharacteristic, type: .withResponse)
     }
     // MARK - private methods
 }
