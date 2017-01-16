@@ -149,6 +149,7 @@ class FUActivityReader: NSObject {
                 if dataIndex == Int(currentFragment.count) {
                     activityFragments.append(currentFragment)
                     state = .ready
+                    
                 }
             }
             break

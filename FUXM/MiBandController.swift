@@ -229,5 +229,10 @@ class MiBandController: NSObject {
         guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
         self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.setFitnessGoal.rawValue, 0x0, UInt8(truncatingBitPattern: steps), UInt8(truncatingBitPattern: steps >> 8)]), for: controlPointCharacteristic, type: .withResponse)
     }
+    
+    func fetchData() {
+        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
+        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.fetchData.rawValue]), for: controlPointCharacteristic, type: .withResponse)
+    }
     // MARK - private methods
 }

@@ -1,4 +1,4 @@
-    //
+//
 //  ViewController+MiBandControllerDelegate.swift
 //  FUXM
 //
@@ -63,5 +63,9 @@ extension ViewController: MiBandControllerDelegate {
     
     func onUpdateRealtimeSteps(_ steps: UInt16, isNotifying: Bool, error: Error?) {
         debugPrint("realtimeSteps: \(steps)")
+    }
+    
+    func onUpdateActivityData(_ activityData: [FUActivityDataFragment]?, isNotifying: Bool, error: Error?) {
+        debugPrint("activityData: \(activityData)")
     }
 }

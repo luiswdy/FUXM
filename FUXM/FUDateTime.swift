@@ -29,11 +29,11 @@ import Foundation
         static let secondRange: Range<Data.Index>= 5..<6
         static let calendar = Calendar(identifier: .gregorian)
         static let timeZone = TimeZone(secondsFromGMT: timeZoneSecondsFromGMT)
-        static let dataLength = 12
+        static let dataLength = 12  // can be six (activity data)
     }
     
     init?(data: Data?) {
-        if let data = data, data.count == Consts.dataLength {
+        if let data = data/*, data.count == Consts.dataLength*/ {
             year = Consts.yearBase + data.subdata(in: Consts.yearRange).withUnsafeBytes( {return $0.pointee} )
             month = Consts.monthBase + data.subdata(in: Consts.monthRange).withUnsafeBytes( {return $0.pointee} )
             day = data.subdata(in: Consts.dayRange).withUnsafeBytes( {return $0.pointee} )

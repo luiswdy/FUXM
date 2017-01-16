@@ -102,11 +102,7 @@ extension MiBandController: CBPeripheralDelegate {
             debugPrint("DEBUG - HERE")
             self.delegate?.onUpdateDeviceInfo?(FUDeviceInfo(data: characteristic.value), isNotifying: characteristic.isNotifying, error: error)
             
-            self.setNotify(enable: true, characteristic: .notification)
             // TEST  ---- TRY HERE
-            if let deviceInfo = FUDeviceInfo(data: characteristic.value) {
-                self.writeUserInfo(FUUserInfo(uid: 123, gender: .male, age: 36, height: 170, weight: 62, type: .normal, alias: "LUIS"), salt:deviceInfo.salt)
-            }
             
             //            self.setNotify(enable: true, characteristic: .sensorData)
             //            self.startSensorData()
@@ -228,7 +224,7 @@ extension MiBandController: CBPeripheralDelegate {
                 self.delegate?.onUpdateActivityData?(nil, isNotifying: characteristic.isNotifying, error: error)
                 return
             }
-            assert(self.activityDataReader != nil, "Unexpected activityDataReader == nil")
+//            assert(self.activityDataReader != nil, "Unexpected activityDataReader == nil")    // TODO: crash
             guard let value = characteristic.value, value.count > 0 else {
                 debugPrint("Got empty value. Skipped")
                 return
@@ -236,7 +232,7 @@ extension MiBandController: CBPeripheralDelegate {
             self.activityDataReader?.append(data: value)
             if self.activityDataReader?.state == .done {
                 self.delegate?.onUpdateActivityData?(activityDataReader?.activityFragments, isNotifying: characteristic.isNotifying, error: error)
-                self.activityDataReader = nil
+//                self.activityDataReader = nil
             }
             break
         case .battery:
@@ -275,20 +271,22 @@ extension MiBandController: CBPeripheralDelegate {
         //        assert(nil != self.boundPeripheral, "self.boundPeripheral == nil")
         self.activePeripheral = peripheral
         readDeviceInfo()
-        
         setNotify(enable: true, characteristic: .notification)
         writeLEParams(FULEParams.lowLatencyLEParams())
         bindPeripheral(self.activePeripheral!)
+        writeUserInfo(FUUserInfo(uid: 123, gender: .male, age: 36, height: 170, weight: 62, type: .normal, alias: "LUIS"), salt:0x3E)    // TEST
         boundPeripheral = self.activePeripheral!
         setWearPosition(position: .leftHand)
         setFitnessGoal(steps: 10000)
         
-        setNotify(enable: true, characteristic: .realtimeSteps)
+//        setNotify(enable: true, characteristic: .realtimeSteps)       // crash
         setNotify(enable: true, characteristic: .activityData)
+        fetchData()
         setNotify(enable: true, characteristic: .battery)
 //        setNotify(enable: true, characteristic: .sensorData)
         writeDateTime(Date())
-        writeLEParams(FULEParams.highLatencyLEParams())
+        readDateTime()
+//        writeLEParams(FULEParams.highLatencyLEParams())
     }
     
     private func printPropertiesFor(_ characteristicDict: [FUCharacteristicUUID : CBCharacteristic]) {
