@@ -19,4 +19,5 @@ import CoreBluetooth.CBPeripheral
     @objc optional func onUpdateLEParams(_ leParams: FULEParams?, isNotifying: Bool, error: Error?)
     @objc optional func onUpdateDateTime(_ dateTime: FUDateTime?, error: Error?)
     @objc optional func onUpdateSensorData(_ sensorData: FUSensorData?, isNotifying: Bool, error: Error?)
+    @objc optional func onUpdateActivityData(_ activityData: [FUActivityDataFragment]?, isNotifying: Bool, error: Error?)
 }

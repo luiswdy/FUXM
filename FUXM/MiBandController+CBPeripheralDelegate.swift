@@ -102,20 +102,20 @@ extension MiBandController: CBPeripheralDelegate {
             debugPrint("DEBUG - HERE")
             self.delegate?.onUpdateDeviceInfo?(FUDeviceInfo(data: characteristic.value), isNotifying: characteristic.isNotifying, error: error)
             
-            self.setNotify(enable: true, characteristic: .notification)
+//            self.setNotify(enable: true, characteristic: .notification)
             // TEST  ---- TRY HERE
             if let deviceInfo = FUDeviceInfo(data: characteristic.value) {
                 self.writeUserInfo(FUUserInfo(uid: 123, gender: .male, age: 36, height: 170, weight: 62, type: .normal, alias: "LUIS"), salt:deviceInfo.salt)
             }
             
-            self.setNotify(enable: true, characteristic: .sensorData)
-            self.startSensorData()
+//            self.setNotify(enable: true, characteristic: .sensorData)
+//            self.startSensorData()
             
 //            self.readSensorData()
             
             // good combination!
-//            self.setNotify(enable: true, characteristic: .notification)
-//            self.setNotify(enable: true, characteristic: .activityData)
+            self.setNotify(enable: true, characteristic: .notification)
+            self.setNotify(enable: true, characteristic: .activityData)
             
             
 //            self.setNotify(enable: true, characteristic: .sensorData)
@@ -210,7 +210,34 @@ extension MiBandController: CBPeripheralDelegate {
                 return
         }
         
-        debugPrint("uuid gotten: \(uuid)")
+    debugPrint("uuid gotten: \(uuid)")
+        
+        
+        if characteristic == characteristicsAvailable[.notification] {
+            
+        } else if characteristic == characteristicsAvailable[.realtimeSteps] {
+            
+        } else if characteristic == characteristicsAvailable[.activityData] {
+            guard nil == error else {
+                self.delegate?.onUpdateActivityData?(nil, isNotifying: characteristic.isNotifying, error: error)
+                return
+            }
+            assert(self.activityDataReader != nil, "Unexpected activityDataReader == nil")
+            guard let value = characteristic.value else {
+                debugPrint("Got empty value. Skipped")
+                return
+            }
+            self.activityDataReader?.append(data: value)
+            if self.activityDataReader?.state == .done {
+                self.delegate?.onUpdateActivityData?(activityDataReader?.activityFragments, isNotifying: characteristic.isNotifying, error: error)
+                self.activityDataReader = nil
+            }
+        } else if characteristic == characteristicsAvailable[.battery] {
+            
+        } else if characteristic == characteristicsAvailable[.sensorData] {
+            
+        }
+        
         
 //        handleNotifications(from: characteristic)
         // TODO: notif handler or notif callback?

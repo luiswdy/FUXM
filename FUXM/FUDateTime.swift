@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FUDateTime: NSObject {
+    class FUDateTime: NSObject {
     // these properties store ORIGINAL values!
     var year: UInt
     var month: UInt
@@ -29,11 +29,11 @@ class FUDateTime: NSObject {
         static let secondRange: Range<Data.Index>= 5..<6
         static let calendar = Calendar(identifier: .gregorian)
         static let timeZone = TimeZone(secondsFromGMT: timeZoneSecondsFromGMT)
-        static let dataLen = 12
+        static let dataLength = 12
     }
     
     init?(data: Data?) {
-        if let data = data, data.count == Consts.dataLen {
+        if let data = data, data.count == Consts.dataLength {
             year = Consts.yearBase + data.subdata(in: Consts.yearRange).withUnsafeBytes( {return $0.pointee} )
             month = Consts.monthBase + data.subdata(in: Consts.monthRange).withUnsafeBytes( {return $0.pointee} )
             day = data.subdata(in: Consts.dayRange).withUnsafeBytes( {return $0.pointee} )

@@ -16,7 +16,7 @@ class FULEParams: NSObject {
     var advertisementInterval: UInt16
     
     struct Consts {
-        static let dataLen = 12
+        static let dataLength = 12
         static let minConnectionIntervalRange: Range<Data.Index> = 0..<2
         static let maxConnectionIntervalRange: Range<Data.Index> = 2..<4
         static let latencyRange: Range<Data.Index> = 4..<6
@@ -59,7 +59,7 @@ class FULEParams: NSObject {
     }
     
     init?(data: Data?) {
-        if let data = data, data.count == Consts.dataLen {
+        if let data = data, data.count == Consts.dataLength {
             self.minConnectionInterval = data.subdata(in: Consts.minConnectionIntervalRange).withUnsafeBytes { (pointer: UnsafePointer<[UInt8]>) -> UInt16 in
                 return pointer.withMemoryRebound(to: UInt16.self, capacity: MemoryLayout<UInt16>.size, { return $0.pointee })
             }

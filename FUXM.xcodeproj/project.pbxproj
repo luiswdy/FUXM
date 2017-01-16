@@ -23,6 +23,8 @@
 		E944DB261E275AE2006A5110 /* FUDeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB251E275AE2006A5110 /* FUDeviceInfo.swift */; };
 		E944DB281E278B16006A5110 /* ViewController+MiBandControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB271E278B16006A5110 /* ViewController+MiBandControllerDelegate.swift */; };
 		E944DB2A1E278CA4006A5110 /* MiBandController+MiBandControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB291E278CA4006A5110 /* MiBandController+MiBandControllerDelegate.swift */; };
+		E954D75F1E2C625B005F3664 /* FUActivityReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E954D75E1E2C625B005F3664 /* FUActivityReader.swift */; };
+		E954D7611E2C841B005F3664 /* FUCRC8Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = E954D7601E2C841B005F3664 /* FUCRC8Util.swift */; };
 		E95960731E2B4D0E00DA5D54 /* FUSensorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95960721E2B4D0E00DA5D54 /* FUSensorData.swift */; };
 		E95960751E2B6B3400DA5D54 /* FUAlarmClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95960741E2B6B3400DA5D54 /* FUAlarmClock.swift */; };
 		E95960771E2BBA6000DA5D54 /* FUStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95960761E2BBA6000DA5D54 /* FUStatistics.swift */; };
@@ -30,6 +32,8 @@
 		E95AA0F61E28AD6F009FD612 /* FULEParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95AA0F51E28AD6F009FD612 /* FULEParams.swift */; };
 		E95AA0F81E28BE2F009FD612 /* FUDateTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95AA0F71E28BE2F009FD612 /* FUDateTime.swift */; };
 		E98E81B71E1A7B450062B9A0 /* FUDataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E81B61E1A7B450062B9A0 /* FUDataReader.swift */; };
+		E9C17E631E2CA981006811BD /* FUActivityData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C17E621E2CA981006811BD /* FUActivityData.swift */; };
+		E9C17E651E2CA98B006811BD /* FUActivityDataFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C17E641E2CA98B006811BD /* FUActivityDataFragment.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,13 +69,15 @@
 		E91642201DF840C300B89E8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E944DB161E271E4F006A5110 /* MiBandController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MiBandController.swift; sourceTree = "<group>"; };
 		E944DB181E27202A006A5110 /* MiBandUserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MiBandUserDefaults.swift; sourceTree = "<group>"; };
-		E944DB1A1E272EE8006A5110 /* MiBandController+Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MiBandController+Enums.swift"; sourceTree = "<group>"; };
+		E944DB1A1E272EE8006A5110 /* MiBandController+Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = "MiBandController+Enums.swift"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E944DB1C1E272FFC006A5110 /* MiBandController+CBCentralManagerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MiBandController+CBCentralManagerDelegate.swift"; sourceTree = "<group>"; };
 		E944DB1E1E273025006A5110 /* MiBandController+CBPeripheralDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MiBandController+CBPeripheralDelegate.swift"; sourceTree = "<group>"; };
 		E944DB221E275A97006A5110 /* FUUserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUUserInfo.swift; sourceTree = "<group>"; };
 		E944DB251E275AE2006A5110 /* FUDeviceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUDeviceInfo.swift; sourceTree = "<group>"; };
 		E944DB271E278B16006A5110 /* ViewController+MiBandControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+MiBandControllerDelegate.swift"; sourceTree = "<group>"; };
 		E944DB291E278CA4006A5110 /* MiBandController+MiBandControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MiBandController+MiBandControllerDelegate.swift"; sourceTree = "<group>"; };
+		E954D75E1E2C625B005F3664 /* FUActivityReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = FUActivityReader.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E954D7601E2C841B005F3664 /* FUCRC8Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUCRC8Util.swift; sourceTree = "<group>"; };
 		E95960721E2B4D0E00DA5D54 /* FUSensorData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUSensorData.swift; sourceTree = "<group>"; };
 		E95960741E2B6B3400DA5D54 /* FUAlarmClock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUAlarmClock.swift; sourceTree = "<group>"; };
 		E95960761E2BBA6000DA5D54 /* FUStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUStatistics.swift; sourceTree = "<group>"; };
@@ -79,6 +85,8 @@
 		E95AA0F51E28AD6F009FD612 /* FULEParams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FULEParams.swift; sourceTree = "<group>"; };
 		E95AA0F71E28BE2F009FD612 /* FUDateTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUDateTime.swift; sourceTree = "<group>"; };
 		E98E81B61E1A7B450062B9A0 /* FUDataReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FUDataReader.swift; path = Utilities/FUDataReader.swift; sourceTree = "<group>"; };
+		E9C17E621E2CA981006811BD /* FUActivityData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUActivityData.swift; sourceTree = "<group>"; };
+		E9C17E641E2CA98B006811BD /* FUActivityDataFragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUActivityDataFragment.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +194,9 @@
 				E95960721E2B4D0E00DA5D54 /* FUSensorData.swift */,
 				E95960741E2B6B3400DA5D54 /* FUAlarmClock.swift */,
 				E95960761E2BBA6000DA5D54 /* FUStatistics.swift */,
+				E954D75E1E2C625B005F3664 /* FUActivityReader.swift */,
+				E9C17E621E2CA981006811BD /* FUActivityData.swift */,
+				E9C17E641E2CA98B006811BD /* FUActivityDataFragment.swift */,
 			);
 			name = DataModels;
 			sourceTree = "<group>";
@@ -201,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				E98E81B61E1A7B450062B9A0 /* FUDataReader.swift */,
+				E954D7601E2C841B005F3664 /* FUCRC8Util.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -350,17 +362,21 @@
 				E944DB171E271E4F006A5110 /* MiBandController.swift in Sources */,
 				E944DB1B1E272EE8006A5110 /* MiBandController+Enums.swift in Sources */,
 				E98E81B71E1A7B450062B9A0 /* FUDataReader.swift in Sources */,
+				E9C17E651E2CA98B006811BD /* FUActivityDataFragment.swift in Sources */,
 				E95960771E2BBA6000DA5D54 /* FUStatistics.swift in Sources */,
 				E944DB1D1E272FFC006A5110 /* MiBandController+CBCentralManagerDelegate.swift in Sources */,
 				E944DB2A1E278CA4006A5110 /* MiBandController+MiBandControllerDelegate.swift in Sources */,
+				E9C17E631E2CA981006811BD /* FUActivityData.swift in Sources */,
 				E95AA0F61E28AD6F009FD612 /* FULEParams.swift in Sources */,
 				E95AA0F81E28BE2F009FD612 /* FUDateTime.swift in Sources */,
 				E95960751E2B6B3400DA5D54 /* FUAlarmClock.swift in Sources */,
 				E95AA0F41E288647009FD612 /* FUBatteryInfo.swift in Sources */,
 				E944DB1F1E273025006A5110 /* MiBandController+CBPeripheralDelegate.swift in Sources */,
 				E91642011DF840C300B89E8E /* ViewController.swift in Sources */,
+				E954D7611E2C841B005F3664 /* FUCRC8Util.swift in Sources */,
 				E95960731E2B4D0E00DA5D54 /* FUSensorData.swift in Sources */,
 				E944DB191E27202A006A5110 /* MiBandUserDefaults.swift in Sources */,
+				E954D75F1E2C625B005F3664 /* FUActivityReader.swift in Sources */,
 				E944DB261E275AE2006A5110 /* FUDeviceInfo.swift in Sources */,
 				E91641FF1DF840C300B89E8E /* AppDelegate.swift in Sources */,
 			);

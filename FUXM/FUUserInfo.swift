@@ -107,22 +107,7 @@ class FUUserInfo: NSObject {
     
     private func checksum(bytes: [UInt8],from index: Int, length: Int, lastMACByte: UInt8) -> UInt8 {
         let input = Array<UInt8>(bytes[index ..< bytes.count])
-        let crc = crc8WithBytes(bytes: input, length: length)
+        let crc = FUCRC8Util.crc8WithBytes(bytes: input, length: length)
         return crc ^ 0xff & lastMACByte
-    }
-    
-    private func crc8WithBytes(bytes: [UInt8], length: Int) -> UInt8 {
-        var checksum: UInt8 = 0
-        for i in 0 ..< length {
-            checksum ^= bytes[i]
-            for _ in 0 ..< 8 {
-                if (checksum & 0x1 as UInt8) > 0 {
-                    checksum = (0x8c ^ (0xff & checksum >> 1))
-                } else {
-                    checksum = (0xff & checksum >> 1)
-                }
-            }
-        }
-        return checksum
     }
 }

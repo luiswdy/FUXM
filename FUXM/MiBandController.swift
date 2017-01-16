@@ -85,6 +85,7 @@ class MiBandController: NSObject {
             return centralManager.isScanning
         }
     }
+    var activityDataReader: FUActivityReader?
 //    private(set)
     
     
@@ -190,6 +191,7 @@ class MiBandController: NSObject {
     
     func setNotify(enable: Bool, characteristic: FUCharacteristicUUID) {
         guard FUCharacteristicUUID.notifiableCharacteristics.contains(characteristic), let notifyCharacteristic = characteristicsAvailable[characteristic] else { return }
+        self.activityDataReader = FUActivityReader()
         self.activePeripheral?.setNotifyValue(enable, for: notifyCharacteristic)
     }
     
