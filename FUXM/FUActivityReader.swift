@@ -75,6 +75,7 @@ import Foundation
  }
  }*/
 
+
 enum FUActivityReadingState {
     case ready, reading, done
 }
@@ -135,6 +136,7 @@ class FUActivityReader: NSObject {
             } else {
                 state = .reading
             }
+            debugPrint("[.ready] currentFragment: \(currentFragment)")
             buffer = buffer.subdata(in: 11..<buffer.count) // metadata is 11 bytes long
             break
         case .reading:
@@ -149,8 +151,9 @@ class FUActivityReader: NSObject {
                 if dataIndex == Int(currentFragment.count) {
                     activityFragments.append(currentFragment)
                     state = .ready
-                    
+                    break
                 }
+                debugPrint("[.reading] currentFragment: \(currentFragment)")
             }
             break
         case .done:

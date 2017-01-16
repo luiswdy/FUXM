@@ -224,8 +224,8 @@ extension MiBandController: CBPeripheralDelegate {
                 self.delegate?.onUpdateActivityData?(nil, isNotifying: characteristic.isNotifying, error: error)
                 return
             }
-//            assert(self.activityDataReader != nil, "Unexpected activityDataReader == nil")    // TODO: crash
-            guard let value = characteristic.value, value.count > 0 else {
+//            assert(self.activityDataReader != nil, "Unexpected activityDataReader == nil")    
+            guard let value = characteristic.value else {
                 debugPrint("Got empty value. Skipped")
                 return
             }
