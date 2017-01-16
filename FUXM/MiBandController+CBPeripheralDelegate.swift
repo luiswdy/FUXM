@@ -144,6 +144,8 @@ extension MiBandController: CBPeripheralDelegate {
             break
         case .realtimeSteps:
             // TODO
+            let steps: UInt16 = characteristic.value!.withUnsafeBytes { return ($0 as UnsafePointer<[UInt8]>).withMemoryRebound(to: UInt16.self, capacity: MemoryLayout<UInt16>.size, { return $0.pointee } ) }
+            self.delegate?.onUpdateRealtimeSteps?(steps, isNotifying: characteristic.isNotifying, error: error)
             break
         case .activityData:
             // TODO
@@ -219,18 +221,9 @@ extension MiBandController: CBPeripheralDelegate {
             // TODO
             break
         case .realtimeSteps:
-            debugPrint("realtimeSteps: \(characteristic.value)")
-        default:
-            debugPrint("uuid: \(uuid). Simply ignore.")
-            break
-        }
-        
-        
-        if characteristic == characteristicsAvailable[.notification] {
-            `
-        } else if characteristic == characteristicsAvailable[.realtimeSteps] {
-            
-        } else if characteristic == characteristicsAvailable[.activityData] {
+            let steps: UInt16 = characteristic.value!.withUnsafeBytes { return ($0 as UnsafePointer<[UInt8]>).withMemoryRebound(to: UInt16.self, capacity: MemoryLayout<UInt16>.size, { return $0.pointee } ) }
+            self.delegate?.onUpdateRealtimeSteps?(steps, isNotifying: characteristic.isNotifying, error: error)
+        case .activityData:
             guard nil == error else {
                 self.delegate?.onUpdateActivityData?(nil, isNotifying: characteristic.isNotifying, error: error)
                 return
@@ -245,12 +238,17 @@ extension MiBandController: CBPeripheralDelegate {
                 self.delegate?.onUpdateActivityData?(activityDataReader?.activityFragments, isNotifying: characteristic.isNotifying, error: error)
                 self.activityDataReader = nil
             }
-        } else if characteristic == characteristicsAvailable[.battery] {
-            
-        } else if characteristic == characteristicsAvailable[.sensorData] {
-            
+            break
+        case .battery:
+            // TODO
+            break
+        case .sensorData:
+            // TODO
+            break
+        default:
+            debugPrint("uuid: \(uuid). Simply ignore.")
+            break
         }
-        
         
         //        handleNotifications(from: characteristic)
         // TODO: notif handler or notif callback?

@@ -61,4 +61,7 @@ extension ViewController: MiBandControllerDelegate {
         debugPrint("\(sensorData)")
     }
     
+    func onUpdateRealtimeSteps(_ steps: UInt16, isNotifying: Bool, error: Error?) {
+        debugPrint("realtimeSteps: \(steps)")
+    }
 }
