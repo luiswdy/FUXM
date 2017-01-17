@@ -7,6 +7,7 @@ target 'FUXM' do
 
   # Pods for FUXM
   pod 'RxBluetoothKit', '~> 3.0.5'
+  pod 'PKHUD', '~> 4.1.0'
 
   target 'FUXMTests' do
     inherit! :search_paths

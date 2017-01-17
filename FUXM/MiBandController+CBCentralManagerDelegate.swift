@@ -9,6 +9,7 @@
 import CoreBluetooth.CBCentralManager
 import AudioToolbox //TEST
 
+/*
 extension MiBandController: CBCentralManagerDelegate {
     // MARK - CBCentralManagerDelegate - monitoring connections with peripherals
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
@@ -74,4 +75,4 @@ extension MiBandController: CBCentralManagerDelegate {
         }
         
     }
-}
+}*/

@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // TEST
         let test = self.window!.rootViewController! as! ViewController
-        test.miController = MiBandController(delegate: test)
+        test.miController = MiBandController()
         
         return true
     }

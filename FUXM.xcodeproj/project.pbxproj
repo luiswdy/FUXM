@@ -17,6 +17,7 @@
 		E91642091DF840C300B89E8E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E91642071DF840C300B89E8E /* LaunchScreen.storyboard */; };
 		E91642141DF840C300B89E8E /* FUXMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91642131DF840C300B89E8E /* FUXMTests.swift */; };
 		E916421F1DF840C300B89E8E /* FUXMUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E916421E1DF840C300B89E8E /* FUXMUITests.swift */; };
+		E92DE7F21E2DF9FD004394D3 /* FUMessageFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92DE7F11E2DF9FD004394D3 /* FUMessageFactory.swift */; };
 		E944DB171E271E4F006A5110 /* MiBandController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB161E271E4F006A5110 /* MiBandController.swift */; };
 		E944DB191E27202A006A5110 /* MiBandUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB181E27202A006A5110 /* MiBandUserDefaults.swift */; };
 		E944DB1B1E272EE8006A5110 /* MiBandController+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944DB1A1E272EE8006A5110 /* MiBandController+Enums.swift */; };
@@ -79,6 +80,7 @@
 		E916421A1DF840C300B89E8E /* FUXMUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FUXMUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E916421E1DF840C300B89E8E /* FUXMUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FUXMUITests.swift; sourceTree = "<group>"; };
 		E91642201DF840C300B89E8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E92DE7F11E2DF9FD004394D3 /* FUMessageFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUMessageFactory.swift; sourceTree = "<group>"; };
 		E944DB161E271E4F006A5110 /* MiBandController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MiBandController.swift; sourceTree = "<group>"; };
 		E944DB181E27202A006A5110 /* MiBandUserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MiBandUserDefaults.swift; sourceTree = "<group>"; };
 		E944DB1A1E272EE8006A5110 /* MiBandController+Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = "MiBandController+Enums.swift"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -253,6 +255,7 @@
 			children = (
 				E98E81B61E1A7B450062B9A0 /* FUDataReader.swift */,
 				E954D7601E2C841B005F3664 /* FUCRC8Util.swift */,
+				E92DE7F11E2DF9FD004394D3 /* FUMessageFactory.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -548,6 +551,7 @@
 				E944DB281E278B16006A5110 /* ViewController+MiBandControllerDelegate.swift in Sources */,
 				E944DB171E271E4F006A5110 /* MiBandController.swift in Sources */,
 				E944DB1B1E272EE8006A5110 /* MiBandController+Enums.swift in Sources */,
+				E92DE7F21E2DF9FD004394D3 /* FUMessageFactory.swift in Sources */,
 				E98E81B71E1A7B450062B9A0 /* FUDataReader.swift in Sources */,
 				E9C17E651E2CA98B006811BD /* FUActivityDataFragment.swift in Sources */,
 				E95960771E2BBA6000DA5D54 /* FUStatistics.swift in Sources */,

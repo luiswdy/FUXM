@@ -7,12 +7,15 @@
 //
 
 import UIKit
-import CoreBluetooth.CBPeripheral
+import RxBluetoothKit
+import RxSwift
+import PKHUD
 
 class ViewController: UIViewController {
     // MARK - properties
-    var miController: MiBandController?
-    var activePeripheral: CBPeripheral?
+    var miController = MiBandController()
+    var disposeBag = DisposeBag()
+//    var activePeripheral: CBPeripheral?
     
     // MARK - Interface Builder outlets
     @IBOutlet var scanBtn: UIButton!
@@ -22,14 +25,23 @@ class ViewController: UIViewController {
     // MARK - view life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        enableButtons() // TEST
+        miController.btState.subscribe(onNext:  { [unowned self] in // self holds miController
+            switch $0 {
+            case .poweredOn:
+                self.enableButtons()
+                break
+            default:
+                debugPrint("bluetooth state: \($0)")
+                break
+            }
+        }).addDisposableTo(disposeBag)
 //        miController = MiBandController(delegate: self)   // TEST
-        if let boundPeripheralUUID = MiBandUserDefaults.loadBoundPeripheralUUID(),
-           let foundPeripheral = miController!.retrievePeripheral(withUUID: boundPeripheralUUID) {
-            activePeripheral = foundPeripheral
-            miController!.connect(activePeripheral!)
-//            miController!.readDeviceInfo()  // TODO: move to "when characteristics are ready"!!!
-        }
+//        if let boundPeripheralUUID = MiBandUserDefaults.loadBoundPeripheralUUID(),
+//           let foundPeripheral = miController!.retrievePeripheral(withUUID: boundPeripheralUUID) {
+//            activePeripheral = foundPeripheral
+//            miController!.connect(activePeripheral!)
+////            miController!.readDeviceInfo()  // TODO: move to "when characteristics are ready"!!!
+//        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -40,7 +52,22 @@ class ViewController: UIViewController {
     // MARK - IBActions
     @IBAction func scan(sender: UIButton) {
         debugPrint("\(#function) sender: \(sender)")
-        scanMiBands()
+        var peripherals: [RxBluetoothKit.ScannedPeripheral] = []
+        HUD.show(.labeledProgress(title: "Scanning", subtitle: "Looking for Mi bands" ))
+        miController.scanMiBands().subscribe(onNext: { (peripheral) in
+            peripherals.append(peripheral)
+        }, onError: { (error) in
+            DispatchQueue.main.async {
+                self.present(FUMessageFactory.simpleMessageView(title: "Error", message: "\(error)"),
+                             animated: true,
+                             completion: nil)
+            }
+        }, onDisposed:  { [unowned self] in // miController is held by self
+            DispatchQueue.main.async {
+                HUD.hide(animated: true)
+                self.showPeripherals(peripherals)
+            }
+        }).addDisposableTo(disposeBag)
     }
     
     @IBAction func stopScan(sender: UIButton) { // manually stop scanning
@@ -50,7 +77,7 @@ class ViewController: UIViewController {
     
     @IBAction func vibrate(sender: UIButton) {
         debugPrint("\(#function) sender: \(sender)")
-        miController!.vibrate(alertLevel: .mildAlert, ledColorForMildAlert: FULEDColor(red: 6, green: 0, blue: 6))
+//        miController!.vibrate(alertLevel: .mildAlert, ledColorForMildAlert: FULEDColor(red: 6, green: 0, blue: 6))
 //        miController!.readActivityData()
     }
     
@@ -71,8 +98,28 @@ class ViewController: UIViewController {
         vibrateBtn.isEnabled = false
     }
     
-    func scanMiBands() {
-        miController?.scanMiBand()
+    func showPeripherals(_ peripherals: [RxBluetoothKit.ScannedPeripheral]) {
+        let alert = UIAlertController(title: "Devices found", message: "Choose the device to pair with", preferredStyle: .actionSheet)
+        for peripheral in peripherals {
+            if let name = peripheral.advertisementData.localName {
+                alert.addAction(
+                    UIAlertAction(title: name, style: .default, handler: { [unowned self] (action) in
+                        HUD.show(.label("Preparing mili services"))
+                        self.miController.connect(peripheral).subscribe(onError: {
+                            debugPrint("\($0)")
+                            DispatchQueue.main.async {
+                                HUD.flash(.error , delay: 1.0)
+                            }
+                        }, onCompleted: {
+                            DispatchQueue.main.async {
+                                HUD.flash(.success, delay: 1.0)
+                            }
+                        }).addDisposableTo(self.disposeBag)
+                    }))
+            }
+        }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     /*

@@ -8,6 +8,7 @@
 
 import CoreBluetooth.CBPeripheral
 
+/*
 extension MiBandController: CBPeripheralDelegate {
     // MARK - CBPeripheralDelegate - Discovering services
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
@@ -341,4 +342,4 @@ extension MiBandController: CBPeripheralDelegate {
             print("]" )   // end of line
         }
     }
-}
+}*/
