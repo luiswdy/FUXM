@@ -11,17 +11,17 @@ import Foundation
 struct FURepetition: OptionSet {
     var rawValue: UInt8
     
-    static let once = 0
-    static let monday = 1
-    static let tuesday = 2
-    static let wednesday = 4
-    static let thursday = 8
-    static let friday = 16
-    static let saturday = 32
-    static let sunday = 64
-    static let weekDays = [ monday, tuesday, wednesday, thursday, friday ]
-    static let weekend = [ saturday, sunday ]
-    static let everyDay = [ weekDays, weekend]
+    static let once = FURepetition(rawValue: 0)
+    static let monday = FURepetition(rawValue: 1 << 0)
+    static let tuesday = FURepetition(rawValue: 1 << 1)
+    static let wednesday = FURepetition(rawValue: 1 << 2)
+    static let thursday = FURepetition(rawValue: 1 << 3)
+    static let friday = FURepetition(rawValue: 1 << 4)
+    static let saturday = FURepetition(rawValue: 1 << 5)
+    static let sunday = FURepetition(rawValue: 1 << 6)
+    static let weekDays: FURepetition = [ .monday, .tuesday, .wednesday, .thursday, .friday ]
+    static let weekend: FURepetition = [ .saturday, .sunday ]
+    static let everyDay: FURepetition = [ .weekDays, .weekend]
 }
 
 class FUAlarmClock: NSObject {

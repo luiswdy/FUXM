@@ -195,7 +195,7 @@ class MiBandController: NSObject {
     
     func setNotify(enable: Bool, characteristic: FUCharacteristicUUID) {
         guard let notifyCharacteristic = characteristicsAvailable[characteristic] else { return }
-        if characteristic == .activityData { self.activityDataReader = FUActivityReader() }
+//        if characteristic == .activityData { self.activityDataReader = FUActivityReader() }
         self.activePeripheral?.setNotifyValue(enable, for: notifyCharacteristic)
     }
     
@@ -233,6 +233,25 @@ class MiBandController: NSObject {
     func fetchData() {
         guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
         self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.fetchData.rawValue]), for: controlPointCharacteristic, type: .withResponse)
+    }
+    
+    func setAlarm(alarm: FUAlarmClock) {
+        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
+        var data = Data(bytes: [ControlPointCommand.setTimer.rawValue])
+        data.append(alarm.data())
+        self.activePeripheral?.writeValue(data, for: controlPointCharacteristic, type: .withResponse)
+    }
+    
+    func setRealtimeStepsNofitication(start: Bool) {     // start = true ==> start, start = false ==> stop
+        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
+        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.setRealtimeStepNotification.rawValue, start ? 1 : 0]), for: controlPointCharacteristic, type: .withResponse)
+    
+    }
+    
+    func setSensorRead(start: Bool) {     // start = true ==> start sensor read, start = false ==> stop sensor read
+        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
+        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.getSensorData.rawValue, start ? 1 : 0]), for: controlPointCharacteristic, type: .withResponse)
+        
     }
     // MARK - private methods
 }

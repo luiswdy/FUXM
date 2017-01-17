@@ -225,15 +225,16 @@ extension MiBandController: CBPeripheralDelegate {
                 return
             }
 //            assert(self.activityDataReader != nil, "Unexpected activityDataReader == nil")    
-            guard let value = characteristic.value else {
-                debugPrint("Got empty value. Skipped")
+            guard characteristic.value != nil else {
+                debugPrint("Got nil value. Skipped")
                 return
             }
-            self.activityDataReader?.append(data: value)
-            if self.activityDataReader?.state == .done {
-                self.delegate?.onUpdateActivityData?(activityDataReader?.activityFragments, isNotifying: characteristic.isNotifying, error: error)
-//                self.activityDataReader = nil
-            }
+            
+//            self.activityDataReader?.append(data: value)
+//            if self.activityDataReader?.state == .done {
+//                self.delegate?.onUpdateActivityData?(activityDataReader?.activityFragments, isNotifying: characteristic.isNotifying, error: error)
+////                self.activityDataReader = nil
+//            }
             break
         case .battery:
             // TODO
@@ -280,13 +281,25 @@ extension MiBandController: CBPeripheralDelegate {
         setFitnessGoal(steps: 10000)
         
 //        setNotify(enable: true, characteristic: .realtimeSteps)       // crash
-        setNotify(enable: true, characteristic: .activityData)
-        fetchData()
-        setNotify(enable: true, characteristic: .battery)
+        
+//        setNotify(enable: true, characteristic: .activityData)
+//        fetchData()
+        
+//        setNotify(enable: true, characteristic: .battery)
 //        setNotify(enable: true, characteristic: .sensorData)
         writeDateTime(Date())
         readDateTime()
-//        writeLEParams(FULEParams.highLatencyLEParams())
+        writeLEParams(FULEParams.highLatencyLEParams())
+        
+        
+        // TEST
+//        let alarmTime = FUDateTime(date: Date())
+//        alarmTime.minute = alarmTime.minute + 1
+//        alarmTime.day = alarmTime.day + 2
+//        let alarm = FUAlarmClock(index: 0, enable: true, dateTime: alarmTime, enableSmartWakeUp: false, repetition: FURepetition.everyDay)
+//        setAlarm(alarm: alarm)
+        // END TEST
+        
     }
     
     private func printPropertiesFor(_ characteristicDict: [FUCharacteristicUUID : CBCharacteristic]) {

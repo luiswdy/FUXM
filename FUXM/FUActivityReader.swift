@@ -8,74 +8,73 @@
 
 import Foundation
 
+enum FUActiviyDataMode: Int {
+    case dataLengthByte = 0, dataLengthMinute = 1
+}
+
+class FUActivityReader: NSObject {
+//    var metadata: FUActivityMetadata
+//    var activitySegments: [FUActivitySegment]
+    
+    private struct Consts {
+        static let activityMetadataLength = 11
+        static let metadataTypeRange: Range<Data.Index> = 0..<1
+        static let metadataTimestampRange: Range<Data.Index> = 1..<6
+        static let metadataTotalDataToRead: Range<Data.Index> = 6..<8
+        
+    }
+    
+//    override var debugDescription: String {
+//        return "metadata: \(metadata), activitySegments: \(activitySegments)"
+//    }
+    
+    init?(data: Data?, supportHeartRate: Bool = false) {    // TODO: default no here as I have only Mi band 1. It should come from FUDeviceInfo
+        guard let data = data else { return nil }
+        super.init()
+        
+        if data.count == Consts.activityMetadataLength {
+            handleMetadata(data: data, supportHeartRate: supportHeartRate)    // metadata
+        } else {
+            handleSegment(data: data)    // activity segment
+        }
+        
+        return nil  // TODO
+    }
+    
+    private func handleMetadata(data: Data, supportHeartRate: Bool) /*-> FUActivityMetadata*/ {
+        // byte 0 is the data type: 1 means that each minute is represented by a triplet of bytes
+        
+        let dataType = FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } )) != nil ? FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } )) : FUActiviyDataMode.dataLengthByte
+        // bytes 1 ~ 6 represents a timestamp
+        let timestamp = FUDateTime(data: data.subdata(in: Consts.metadataTimestampRange))
+        // counter for all data held by the band
+        var totalDataToRead = data.subdata(in: Consts.metadataTotalDataToRead).withUnsafeBytes( { return ($0 as UnsafePointer<UInt16>).pointee })
+        let bytesPerMinute = UInt16(dataType == .dataLengthMinute ? getBytesPerMinuteOfActivityData(supportHeartRate: supportHeartRate) : 1)
+        totalDataToRead = totalDataToRead * bytesPerMinute
+        // counter of this data block
+        var dataUntilNextHeader = data.subdata(in: Consts.metadataTotalDataToRead).withUnsafeBytes( { return ($0 as UnsafePointer<UInt16>).pointee })
+        dataUntilNextHeader = dataUntilNextHeader * bytesPerMinute
+        
+        // there is a total of totalDataToRead that will come in chunks (3 or 4 bytes per minute if dataType == 1 (FUActiviyDataMode.dataLengthMinute)),
+        // these chunks are usually 20 bytes long and grouped in blocks
+        // after dataUntilNextHeader bytes we will get a new packet of 11 bytes that should be parsed
+        // as we just did
+        
+        debugPrint("totalDataToRead: \(totalDataToRead), length: \(Int(totalDataToRead) / getBytesPerMinuteOfActivityData(supportHeartRate: supportHeartRate)) minute(s)")
+        debugPrint("dataUntilNextHeader: \(dataUntilNextHeader), length: \(Int(dataUntilNextHeader) / getBytesPerMinuteOfActivityData(supportHeartRate: supportHeartRate)) minute(s)")
+        debugPrint("timestamp: \(timestamp), magic byte: \(dataUntilNextHeader)")
+    }
+    
+    private func handleSegment(data: Data) /*-> FUActivitySegment*/ {
+        
+    }
+    
+    private func getBytesPerMinuteOfActivityData(supportHeartRate: Bool) -> Int {
+        return supportHeartRate ? 4: 3
+    }
+}
+
 /*
- enum FUActiviyDataMode: Int {
- case dataLengthByte = 0, dataLengthMinute = 1
- }
- 
- class FUActivityReader: NSObject {
- var metadata: FUActivityMetadata
- var activitySegments: [FUActivitySegment]
- 
- private struct Consts {
- static let activityMetadataLength = 11
- static let metadataTypeRange: Range<Data.Index> = 0..<1
- static let metadataTimestampRange: Range<Data.Index> = 1..<6
- static let metadataTotalDataToRead: Range<Data.Index> = 6..<8
- 
- }
- 
- override var debugDescription: String {
- return "metadata: \(metadata), activitySegments: \(activitySegments)"
- }
- 
- init?(data: Data?, supportHeartRate: Bool = false) {    // TODO: default no here as I have only Mi band 1. It should come from FUDeviceInfo
- guard let data = data else { return nil }
- super.init()
- 
- if data.count == Consts.activityMetadataLength {
- handleMetadata(data: data, supportHeartRate: supportHeartRate)    // metadata
- } else {
- handleSegment(data: data)    // activity segment
- }
- 
- return nil  // TODO
- }
- 
- private func handleMetadata(data: Data, supportHeartRate: Bool) -> FUActivityMetadata {
- // byte 0 is the data type: 1 means that each minute is represented by a triplet of bytes
- 
- let dataType = FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } )) != nil ? FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } )) : FUActiviyDataMode.dataLengthByte
- // bytes 1 ~ 6 represents a timestamp
- let timestamp = FUDateTime(data: data.subdata(in: Consts.metadataTimestampRange))
- // counter for all data held by the band
- var totalDataToRead = data.subdata(in: Consts.metadataTotalDataToRead).withUnsafeBytes( { return ($0 as UnsafePointer<UInt16>).pointee })
- let bytesPerMinute = UInt16(dataType == .dataLengthMinute ? getBytesPerMinuteOfActivityData(supportHeartRate: supportHeartRate) : 1)
- totalDataToRead = totalDataToRead * bytesPerMinute
- // counter of this data block
- var dataUntilNextHeader = data.subdata(in: Consts.metadataTotalDataToRead).withUnsafeBytes( { return ($0 as UnsafePointer<UInt16>).pointee })
- dataUntilNextHeader = dataUntilNextHeader * bytesPerMinute
- 
- // there is a total of totalDataToRead that will come in chunks (3 or 4 bytes per minute if dataType == 1 (FUActiviyDataMode.dataLengthMinute)),
- // these chunks are usually 20 bytes long and grouped in blocks
- // after dataUntilNextHeader bytes we will get a new packet of 11 bytes that should be parsed
- // as we just did
- 
- debugPrint("totalDataToRead: \(totalDataToRead), length: \(Int(totalDataToRead) / getBytesPerMinuteOfActivityData(supportHeartRate: supportHeartRate)) minute(s)")
- debugPrint("dataUntilNextHeader: \(dataUntilNextHeader), length: \(Int(dataUntilNextHeader) / getBytesPerMinuteOfActivityData(supportHeartRate: supportHeartRate)) minute(s)")
- debugPrint("timestamp: \(timestamp), magic byte: \(dataUntilNextHeader)")
- }
- 
- private func handleSegment(data: Data) -> FUActivitySegment {
- 
- }
- 
- private func getBytesPerMinuteOfActivityData(supportHeartRate: Bool) -> Int {
- return supportHeartRate ? 4: 3
- }
- }*/
-
-
 enum FUActivityReadingState {
     case ready, reading, done
 }
@@ -161,5 +160,5 @@ class FUActivityReader: NSObject {
             break
         }
     }
-    
-}
+ 
+}*/
