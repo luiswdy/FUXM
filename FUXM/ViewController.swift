@@ -76,9 +76,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func vibrate(sender: UIButton) {
-        debugPrint("\(#function) sender: \(sender)")
-//        miController!.vibrate(alertLevel: .mildAlert, ledColorForMildAlert: FULEDColor(red: 6, green: 0, blue: 6))
-//        miController!.readActivityData()
+        miController.vibrate(alertLevel: .mildAlert, ledColorForMildAlert: FULEDColor(red: 6, green: 0, blue: 6))
     }
     
 

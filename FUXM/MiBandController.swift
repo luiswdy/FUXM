@@ -139,19 +139,19 @@ class MiBandController: NSObject {
 //        self.activePeripheral?.writeValue(userInfo.data(salt: salt), for: userInfoCharacteristic, type: .withResponse)
 //    }
 //    
-//    func vibrate(alertLevel: VibrationAlertLevel, ledColorForMildAlert: FULEDColor? = nil) {
-//        guard let alertLevelCharacteristic = characteristicsAvailable[.alertLevel], let controlPointCharacteristic = characteristicsAvailable[.controlPoint]else { return }
-//        var data: Data!
-//        if let color = ledColorForMildAlert {
-//            data = Data(bytes: [VibrationAlertLevel.vibrateOnly.rawValue])
-//            self.activePeripheral?.writeValue(data, for: alertLevelCharacteristic, type: .withoutResponse)
-//            self.activePeripheral?.writeValue(Data(bytes:[ ControlPointCommand.setColorTheme.rawValue, color.red, color.green, color.blue, 0x1 as UInt8 ]), for: controlPointCharacteristic, type:.withResponse)
-//        } else {
-//            data = Data(bytes: [alertLevel.rawValue])
-//            self.activePeripheral?.writeValue(data, for: alertLevelCharacteristic, type: .withoutResponse)
-//        }
-//    }
-//    
+    func vibrate(alertLevel: VibrationAlertLevel, ledColorForMildAlert: FULEDColor? = nil) {
+        guard let alertLevelChar = characteristicDict[.alertLevel], let controlPointChar = characteristicDict[.controlPoint]else { return }
+        var data: Data
+        if let color = ledColorForMildAlert {
+            data = Data(bytes: [VibrationAlertLevel.vibrateOnly.rawValue])
+            alertLevelChar.writeValue(data, type: .withoutResponse).publish().connect().dispose()
+            controlPointChar.writeValue(Data(bytes:[ ControlPointCommand.setColorTheme.rawValue, color.red, color.green, color.blue, 0x1 as UInt8 ]), type: .withResponse).publish().connect().dispose()
+        } else {
+            data = Data(bytes: [alertLevel.rawValue])
+            alertLevelChar.writeValue(data, type: .withoutResponse).publish().connect().dispose()
+        }
+    }
+//
 //    func bindPeripheral(_ peripheral: CBPeripheral) {
 //        guard let pairCharacteristic = characteristicsAvailable[.pair] else { return }
 //        self.activePeripheral?.writeValue(Data(bytes:[ PairCommand.pair.rawValue ]), for: pairCharacteristic, type: .withResponse)
