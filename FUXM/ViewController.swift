@@ -15,12 +15,16 @@ class ViewController: UIViewController {
     // MARK - properties
     var miController = MiBandController()
     var disposeBag = DisposeBag()
-//    var activePeripheral: CBPeripheral?
+    var deviceInfo: FUDeviceInfo?
     
     // MARK - Interface Builder outlets
     @IBOutlet var scanBtn: UIButton!
     @IBOutlet var stopScanBtn: UIButton!
     @IBOutlet var vibrateBtn: UIButton!
+    
+    struct Consts {
+        static let hudFlashDelay = 1.0
+    }
     
     // MARK - view life cycle
     override func viewDidLoad() {
@@ -79,10 +83,6 @@ class ViewController: UIViewController {
         miController.vibrate(alertLevel: .mildAlert, ledColorForMildAlert: FULEDColor(red: 6, green: 0, blue: 6))
     }
     
-
-    
-    
-    
     // MARK - private methods
     func enableButtons() {
         scanBtn.isEnabled = true
@@ -106,11 +106,27 @@ class ViewController: UIViewController {
                         self.miController.connect(peripheral).subscribe(onError: {
                             debugPrint("\($0)")
                             DispatchQueue.main.async {
-                                HUD.flash(.error , delay: 1.0)
+                                HUD.flash(.error , delay: Consts.hudFlashDelay)
                             }
                         }, onCompleted: {
                             DispatchQueue.main.async {
-                                HUD.flash(.success, delay: 1.0)
+                                HUD.flash(.success, delay: Consts.hudFlashDelay)
+                                // TEST TRY
+                                self.miController.readDeviceInfo().subscribe(onNext: { [unowned self] in
+                                    self.deviceInfo = FUDeviceInfo(data: $0.value)
+                                    debugPrint("deviceInfo: \(self.deviceInfo)")
+                                    self.miController.setNotify(enable: true, characteristic: .notification)
+                                        .subscribe(onNext: { debugPrint("\($0)")
+                                        },
+                                                   onError: { debugPrint("\($0)")},
+                                                   onCompleted: { debugPrint("completed")},
+                                                   onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
+                                    let userInfo = FUUserInfo(uid: 123, gender: .male, age: 37, height: 174, weight: 64, type: .normal, alias: "Luis")
+                                    self.miController.writeUserInfo(userInfo, salt: self.deviceInfo!.salt).publish().connect().addDisposableTo(self.disposeBag)
+                                    self.miController.bindPeripheral().publish().connect().addDisposableTo(self.disposeBag)
+                                    let dateTime = FUDateTime(year: 17, month: 1, day: 1, hour: 6, minute: 30, second: 00)
+                                    self.miController.setAlarm(alarm: FUAlarmClock(index: 0, enable: true, dateTime: dateTime, enableSmartWakeUp: true, repetition: FURepetition.weekDays)).subscribe(onCompleted: { debugPrint("Alarm set") }).addDisposableTo(self.disposeBag)
+                                }).addDisposableTo(self.disposeBag)
                             }
                         }).addDisposableTo(self.disposeBag)
                     }))
@@ -121,20 +137,6 @@ class ViewController: UIViewController {
     }
     
     /*
-    
-    func createDate(newerDate: Date, olderDate: Date? = nil) -> Data {
-        var bytes: [UInt8] = []
-        let calendar = Calendar(identifier: .gregorian)
-        let dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: newerDate)
-        bytes.append(UInt8(truncatingBitPattern: dateComponents.year! - 2000))
-        bytes.append(UInt8(truncatingBitPattern: dateComponents.month! - 1))
-        bytes.append(UInt8(truncatingBitPattern: dateComponents.day!))
-        bytes.append(UInt8(truncatingBitPattern: dateComponents.hour!))
-        bytes.append(UInt8(truncatingBitPattern: dateComponents.minute!))
-        bytes.append(UInt8(truncatingBitPattern: dateComponents.second!))
-        return Data(bytes:bytes)
-    }
-    
     
     func handleNotifications(from characteristic: CBCharacteristic) {
         debugPrint("\(#function) characteristic: \(characteristic)")
@@ -216,24 +218,6 @@ class ViewController: UIViewController {
         }
     }
     
-    func handleSensorData(value: Data?) {
-        guard let value = value else { return } // observation: I think this is a good trick to unwrap optionals
-        guard 0 == (value.count - 2) % 6 else {
-            debugPrint("Unexpected data length. value: \(value)")
-            return
-        }
-            
-//        var count = 0, axis1 = 0, axis2 = 0, axis3: UInt16 = 0
-        let countData = value.subdata(in: 0..<2)
-        
-        let count = countData.withUnsafeBytes { (pointer: UnsafePointer<UInt16>) -> UInt16 in
-            return pointer.pointee
-        }
-        
-        debugPrint("count: \(count)")
-        
-//        let 
-        
     }*/
 }
 

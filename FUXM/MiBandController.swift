@@ -123,39 +123,44 @@ class MiBandController: NSObject {
 //        return centralManager.retrievePeripherals(withIdentifiers: [uuid]).first
 //    }
 //    
-//    func readDeviceInfo() {
-//        guard let deviceInfoCharacteristic = characteristicsAvailable[.deviceInfo] else { return }
-//        self.activePeripheral?.readValue(for: deviceInfoCharacteristic)
-//        
-//    }
-//    
+    func readDeviceInfo() -> Observable<Characteristic> {
+        assert(characteristicDict[.deviceInfo] != nil, "characteristic is nil")
+        return characteristicDict[.deviceInfo]!.readValue()
+    }
+//
 //    func readUserInfo() {
 //        guard let userInfoCharacteristic = characteristicsAvailable[.userInfo] else { return }
 //        self.activePeripheral?.readValue(for: userInfoCharacteristic)
 //    }
 //    
-//    func writeUserInfo(_ userInfo: FUUserInfo, salt: UInt8) {
-//        guard let userInfoCharacteristic = characteristicsAvailable[.userInfo] else { return }
-//        self.activePeripheral?.writeValue(userInfo.data(salt: salt), for: userInfoCharacteristic, type: .withResponse)
-//    }
-//    
+    func writeUserInfo(_ userInfo: FUUserInfo, salt: UInt8) -> Observable<Characteristic> {
+        assert(characteristicDict[.userInfo] != nil, "characteristic is nil")
+        return characteristicDict[.userInfo]!.writeValue(userInfo.data(salt: salt), type: .withResponse)
+    }
+//
     func vibrate(alertLevel: VibrationAlertLevel, ledColorForMildAlert: FULEDColor? = nil) {
-        guard let alertLevelChar = characteristicDict[.alertLevel], let controlPointChar = characteristicDict[.controlPoint]else { return }
+        assert(characteristicDict[.deviceInfo] != nil && characteristicDict[.controlPoint] != nil, "characteristics are nil")
         var data: Data
         if let color = ledColorForMildAlert {
             data = Data(bytes: [VibrationAlertLevel.vibrateOnly.rawValue])
-            alertLevelChar.writeValue(data, type: .withoutResponse).publish().connect().dispose()
-            controlPointChar.writeValue(Data(bytes:[ ControlPointCommand.setColorTheme.rawValue, color.red, color.green, color.blue, 0x1 as UInt8 ]), type: .withResponse).publish().connect().dispose()
+            characteristicDict[.alertLevel]!.writeValue(data, type: .withoutResponse)
+                .concat(
+                    characteristicDict[.controlPoint]!.writeValue(
+                    Data(bytes:[ ControlPointCommand.setColorTheme.rawValue,
+                                 color.red, color.green, color.blue, 0x1 as UInt8 ]),
+                    type: .withResponse)
+                )
+                .publish().connect().dispose()
+            
         } else {
             data = Data(bytes: [alertLevel.rawValue])
-            alertLevelChar.writeValue(data, type: .withoutResponse).publish().connect().dispose()
+            characteristicDict[.alertLevel]!.writeValue(data, type: .withoutResponse).publish().connect().dispose()
         }
     }
-//
-//    func bindPeripheral(_ peripheral: CBPeripheral) {
-//        guard let pairCharacteristic = characteristicsAvailable[.pair] else { return }
-//        self.activePeripheral?.writeValue(Data(bytes:[ PairCommand.pair.rawValue ]), for: pairCharacteristic, type: .withResponse)
-//    }
+    func bindPeripheral() -> Observable<Characteristic> {
+        assert(characteristicDict[.pair] != nil, "characteristic is nil")
+        return characteristicDict[.pair]!.writeValue(Data(bytes:[PairCommand.pair.rawValue]), type: .withResponse)
+    }
 //    
 //    func readBatteryInfo() {
 //        guard let batteryInfoCharacteristic = characteristicsAvailable[.battery] else { return }
@@ -191,12 +196,12 @@ class MiBandController: NSObject {
 //        self.activePeripheral?.writeValue(data, for: dateTimeCharacteristic, type: .withResponse)
 //    }
 //    
-//    func setNotify(enable: Bool, characteristic: FUCharacteristicUUID) {
-//        guard let notifyCharacteristic = characteristicsAvailable[characteristic] else { return }
-////        if characteristic == .activityData { self.activityDataReader = FUActivityReader() }
-//        self.activePeripheral?.setNotifyValue(enable, for: notifyCharacteristic)
-//    }
-//    
+    func setNotify(enable: Bool, characteristic: FUCharacteristicUUID) -> Observable<Characteristic> {
+        assert(characteristicDict[characteristic] != nil, "characteristic is nil")
+//        return characteristicDict[characteristic]!.setNotifyValue(enable)
+        return characteristicDict[characteristic]!.setNotificationAndMonitorUpdates()
+    }
+    
 //    func readSensorData() {
 //        guard let sensorDataCharacteristic = characteristicsAvailable[.sensorData] else { return }
 //        self.activePeripheral?.writeValue(Data(bytes: [1]), for: sensorDataCharacteristic, type: .withResponse)
@@ -233,13 +238,13 @@ class MiBandController: NSObject {
 //        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.fetchData.rawValue]), for: controlPointCharacteristic, type: .withResponse)
 //    }
 //    
-//    func setAlarm(alarm: FUAlarmClock) {
-//        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
-//        var data = Data(bytes: [ControlPointCommand.setTimer.rawValue])
-//        data.append(alarm.data())
-//        self.activePeripheral?.writeValue(data, for: controlPointCharacteristic, type: .withResponse)
-//    }
-//    
+    func setAlarm(alarm: FUAlarmClock) -> Observable<Characteristic> {
+        assert(characteristicDict[.controlPoint] != nil, "characteristic is nil")
+        var data = Data(bytes: [ControlPointCommand.setTimer.rawValue])
+        data.append(alarm.data())
+        return characteristicDict[.controlPoint]!.writeValue(data, type: .withResponse)
+    }
+//
 //    func setRealtimeStepsNofitication(start: Bool) {     // start = true ==> start, start = false ==> stop
 //        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
 //        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.setRealtimeStepNotification.rawValue, start ? 1 : 0]), for: controlPointCharacteristic, type: .withResponse)
