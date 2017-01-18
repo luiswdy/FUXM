@@ -89,7 +89,6 @@ extension MiBandController {
         
     }
     
-    
     enum FUActivityType: Int8 {
         case
         activity    = -1,
@@ -98,57 +97,6 @@ extension MiBandController {
         lightSleep  = 5,
         charging    = 6
     }
-    
-    /* References ..... somewhat contradicted to each other. My implementation is based on android on
-     typedef NS_OPTIONS(NSInteger, MBControlPoint) {
-     MBControlPointStopCallRemind = 0,
-     MBControlPointCallRemind,
-     MBControlPointRealtimeSetpsNotification = 3,
-     MBControlPointTimer,
-     MBControlPointGoal,
-     MBControlPointFetchData,
-     MBControlPointFirmwareInfo,
-     MBControlPointSendNotification,
-     MBControlPointReset,
-     MBControlPointConfirmData,
-     MBControlPointSync,
-     MBControlPointReboot = 12,
-     MBControlPointColor = 14,
-     MBControlPointWearPosition,
-     MBControlPointRealtimeSteps,
-     MBControlPointStopSync,
-     MBControlPointSensorData,
-     MBControlPointStopVibrate
-     };
-     
-     /* COMMANDS: usually sent to UUID_CHARACTERISTIC_CONTROL_POINT characteristic */
-     
-     public static final byte COMMAND_SET_TIMER = 0x4;
-     public static final byte COMMAND_SET_FITNESS_GOAL = 0x5;
-     public static final byte COMMAND_FETCH_DATA = 0x6;
-     public static final byte COMMAND_SEND_FIRMWARE_INFO = 0x7;
-     public static final byte COMMAND_SEND_NOTIFICATION = 0x8;
-     public static final byte COMMAND_CONFIRM_ACTIVITY_DATA_TRANSFER_COMPLETE = 0xa;
-     public static final byte COMMAND_SYNC = 0xb;
-     public static final byte COMMAND_REBOOT = 0xc;
-     public static final byte COMMAND_SET_WEAR_LOCATION = 0xf;
-     public static final byte COMMAND_STOP_SYNC_DATA = 0x11;
-     public static final byte COMMAND_STOP_MOTOR_VIBRATE = 0x13;
-     public static final byte COMMAND_SET_REALTIME_STEPS_NOTIFICATION = 0x3;
-     public static final byte COMMAND_SET_REALTIME_STEP = 0x10;
-     
-     // Test HR
-     public static final byte COMMAND_SET_HR_SLEEP = 0x0;
-     public static final byte COMMAND_SET__HR_CONTINUOUS = 0x1;
-     public static final byte COMMAND_SET_HR_MANUAL = 0x2;
-     public static final byte COMMAND_GET_SENSOR_DATA = 0x12;
-     
-     
-     //FURTHER COMMANDS: unchecked therefore left commented
-     public static final byte COMMAND_FACTORY_RESET = 0x9t;
-     public static final int COMMAND_SET_COLOR_THEME = et;
-     
-     */
     
     enum ControlPointCommand: UInt8 {
         case
