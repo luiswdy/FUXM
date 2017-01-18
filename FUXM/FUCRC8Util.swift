@@ -6,8 +6,6 @@
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
 
-import Foundation
-
 class FUCRC8Util {
     static func crc8WithBytes(bytes: [UInt8], length: Int) -> UInt8 {
         var checksum: UInt8 = 0

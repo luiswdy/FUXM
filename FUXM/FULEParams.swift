@@ -6,9 +6,9 @@
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSData
 
-class FULEParams: NSObject {
+class FULEParams: CustomDebugStringConvertible, FUDataInitiable {
     var minConnectionInterval: UInt16
     var maxConnectionInterval: UInt16
     var latency: UInt16
@@ -31,7 +31,7 @@ class FULEParams: NSObject {
         static let timeout: UInt16 = 500    // this is minimum value allowed
     }
     
-    override var debugDescription: String {
+    var debugDescription: String {
         return "minConnectionInterval: \(minConnectionInterval), "
         + "maxConnectionInterval: \(maxConnectionInterval), "
         + "latency: \(latency), "
@@ -58,7 +58,7 @@ class FULEParams: NSObject {
         self.advertisementInterval = adv
     }
     
-    init?(data: Data?) {
+    required init?(data: Data?) {
         if let data = data, data.count == Consts.dataLength {
             self.minConnectionInterval = data.subdata(in: Consts.minConnectionIntervalRange).withUnsafeBytes { (pointer: UnsafePointer<[UInt8]>) -> UInt16 in
                 return pointer.withMemoryRebound(to: UInt16.self, capacity: MemoryLayout<UInt16>.size, { return $0.pointee })

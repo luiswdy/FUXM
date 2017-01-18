@@ -6,12 +6,12 @@
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSData
 
-    class FUDateTime: NSObject {
+class FUDateTime: CustomDebugStringConvertible, FUDataInitiable {
     // these properties store ORIGINAL values!
-    var year: UInt
-    var month: UInt
+    var year: UInt      // i.e. 17 for 2017
+    var month: UInt     // i.e. 1 for January
     var day: UInt
     var hour: UInt
     var minute: UInt
@@ -32,7 +32,7 @@ import Foundation
         static let dataLength = 12  // can be six (activity data)
     }
     
-    init?(data: Data?) {
+    required init?(data: Data?) {
         if let data = data/*, data.count == Consts.dataLength*/ {
             year = Consts.yearBase + data.subdata(in: Consts.yearRange).withUnsafeBytes( {return $0.pointee} )
             month = Consts.monthBase + data.subdata(in: Consts.monthRange).withUnsafeBytes( {return $0.pointee} )
@@ -40,7 +40,6 @@ import Foundation
             hour = data.subdata(in: Consts.hourRange).withUnsafeBytes( {return $0.pointee} )
             minute = data.subdata(in: Consts.minuteRange).withUnsafeBytes( {return $0.pointee} )
             second = data.subdata(in: Consts.secondRange).withUnsafeBytes( {return $0.pointee} )
-            super.init()
         } else {
             return nil
         }
@@ -54,7 +53,6 @@ import Foundation
         self.hour = hour
         self.minute = minute
         self.second = second
-        super.init()
     }
     
     init(date: Date) {
@@ -65,7 +63,6 @@ import Foundation
         self.hour = UInt(dateComponents.hour!)
         self.minute = UInt(dateComponents.minute!)
         self.second = UInt(dateComponents.second!)
-        super.init()
     }
     
     func data() -> Data {
@@ -83,7 +80,7 @@ import Foundation
         return dateComponents.date
     }
     
-    override var debugDescription: String {
+    var debugDescription: String {
         return "year: \(year), month: \(month), day: \(day), hour: \(hour), minute: \(minute), second: \(second)"
     }
 }

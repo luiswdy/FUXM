@@ -6,13 +6,13 @@
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSData
 
 enum FUActiviyDataMode: Int {
     case dataLengthByte = 0, dataLengthMinute = 1
 }
 
-class FUActivityReader: NSObject {
+class FUActivityReader: CustomDebugStringConvertible {
 //    var metadata: FUActivityMetadata
 //    var activitySegments: [FUActivitySegment]
     
@@ -24,13 +24,12 @@ class FUActivityReader: NSObject {
         
     }
     
-//    override var debugDescription: String {
-//        return "metadata: \(metadata), activitySegments: \(activitySegments)"
-//    }
+    var debugDescription: String {
+        return "TODO"
+    }
     
     init?(data: Data?, supportHeartRate: Bool = false) {    // TODO: default no here as I have only Mi band 1. It should come from FUDeviceInfo
         guard let data = data else { return nil }
-        super.init()
         
         if data.count == Consts.activityMetadataLength {
             handleMetadata(data: data, supportHeartRate: supportHeartRate)    // metadata

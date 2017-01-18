@@ -6,14 +6,14 @@
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSData
 
 enum FUBatteryStatus: UInt8 {
     case
     normal = 0, low, charging, chargingFull, chargeOff
 }
 
-class FUBatteryInfo: NSObject {
+class FUBatteryInfo: CustomDebugStringConvertible, FUDataInitiable {
     let level: UInt8
     let lastChargeDate: FUDateTime
     let chargesCount: UInt16
@@ -26,14 +26,14 @@ class FUBatteryInfo: NSObject {
         static let statusRange: Range<Data.Index> = 9..<10
     }
     
-    override var debugDescription: String {
+    var debugDescription: String {
         return "level: \(level), "
             + "lastChargeDate: \(lastChargeDate) "
             + "chargesCount: \(chargesCount), "
             + "status: \(status)"
     }
     
-    init?(data: Data?) {
+    required init?(data: Data?) {
         if let data = data {
             self.level = data.subdata(in: Consts.levelRange).withUnsafeBytes( { return $0.pointee } )
             if let convertedDate = FUDateTime(data: data.subdata(in: Consts.lastChargeDateRange)) {
@@ -49,10 +49,8 @@ class FUBatteryInfo: NSObject {
             } else {
                 return nil
             }
-            super.init()
         } else {
             return nil
         }
     }
-    
 }

@@ -26,24 +26,38 @@ enum FUWearPosition: UInt8 {
     case leftHand = 0, rightHand
 }
 
-class FULEDColor {
-    private static let minValue: UInt8 = 0
-    private static let maxValue: UInt8 = 6
-    var red: UInt8
-    var green: UInt8
-    var blue: UInt8
-    
-    required init?(red: UInt8, green: UInt8, blue: UInt8) {    // failable initializer
-        if !(FULEDColor.minValue ... FULEDColor.maxValue ~= red) ||         // check if rgb are within the range
-           !(FULEDColor.minValue ... FULEDColor.maxValue ~= green) ||
-           !(FULEDColor.minValue ... FULEDColor.maxValue ~= blue) {
-            return nil
-        } else {
-            self.red = red
-            self.green = green
-            self.blue = blue
-        }
-    }
+// Values may receive from
+// optional func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?)
+// after setNotify to characteristic notification (0xff03)
+enum FUNotification: UInt8 {
+    case
+    //    unknown = -0x1,
+    normal                  = 0x0,
+    firmwareUpdateFailed    = 0x1,
+    firmwareUpdateSuccess   = 0x2,
+    connParamUpdateFailed   = 0x3,
+    connParamUpdateSuccess  = 0x4,
+    authSuccess             = 0x5,
+    authFailed              = 0x6,
+    fitnessGoalAchieved     = 0x7,
+    setLatencySuccess       = 0x8,
+    resetAuthFailed         = 0x9,
+    resetAuthSuccess        = 0x10,
+    firmwareCheckFailed     = 0x11,
+    firmwareCheckSuccess    = 0x12,
+    motorNotify             = 0x13,
+    motorCall               = 0x14,
+    motorDisconnect         = 0x15,
+    motorSmartAlarm         = 0x16,
+    motorAlarm              = 0x17,
+    motorGoal               = 0x18,
+    motorAuth               = 0x19,
+    motorShutdown           = 0x20,
+    motorAuthSuccess        = 0x21,
+    motorTest               = 0x22,
+    // I remember I got 0x18 !? while keeping shaking mi band at starting the app
+    pairCancel              = 0xef,
+    deviceMalfunction       = 0xff
 }
 
 class MiBandController: NSObject {
@@ -119,25 +133,40 @@ class MiBandController: NSObject {
             })
     }
     
-//    func retrievePeripheral(withUUID uuid: UUID) -> CBPeripheral? {
-//        return centralManager.retrievePeripherals(withIdentifiers: [uuid]).first
-//    }
-//    
-    func readDeviceInfo() -> Observable<Characteristic> {
-        assert(characteristicDict[.deviceInfo] != nil, "characteristic is nil")
-        return characteristicDict[.deviceInfo]!.readValue()
+    
+    // Generic utility function
+    static private func readValueFor<T: FUDataInitiable>(characteristic: Characteristic?, _ type: T.Type) -> Observable<T?> {
+        if let characteristic = characteristic {
+            return characteristic.readValue().map { (characteristic) -> T? in
+                return T(data: characteristic.value)
+            }
+        } else {
+            return Observable<T?>.create( {
+                $0.onNext(nil)
+                return Disposables.create() // no-op disposable
+            } )
+        }
     }
-//
-//    func readUserInfo() {
-//        guard let userInfoCharacteristic = characteristicsAvailable[.userInfo] else { return }
-//        self.activePeripheral?.readValue(for: userInfoCharacteristic)
-//    }
-//    
+    
+    func retrievePeripheral(withUUID uuid: UUID) -> Observable<Peripheral?> {
+        return btManager.retrievePeripherals(withIdentifiers: [uuid]).map { return $0.first }   // get the first one as default, as we only pass one uuid
+    }
+    
+    func readDeviceInfo() -> Observable<FUDeviceInfo?> {
+        assert(characteristicDict[.deviceInfo] != nil, "characteristic is nil")
+        return MiBandController.readValueFor(characteristic: characteristicDict[.deviceInfo], FUDeviceInfo.self)
+    }
+
+    func readUserInfo() -> Observable<FUUserInfo?> {
+        assert(characteristicDict[.userInfo] != nil, "characteristic is nil")
+        return MiBandController.readValueFor(characteristic: characteristicDict[.userInfo], FUUserInfo.self)
+    }
+    
     func writeUserInfo(_ userInfo: FUUserInfo, salt: UInt8) -> Observable<Characteristic> {
         assert(characteristicDict[.userInfo] != nil, "characteristic is nil")
         return characteristicDict[.userInfo]!.writeValue(userInfo.data(salt: salt), type: .withResponse)
     }
-//
+
     func vibrate(alertLevel: VibrationAlertLevel, ledColorForMildAlert: FULEDColor? = nil) {
         assert(characteristicDict[.deviceInfo] != nil && characteristicDict[.controlPoint] != nil, "characteristics are nil")
         var data: Data
@@ -157,31 +186,32 @@ class MiBandController: NSObject {
             characteristicDict[.alertLevel]!.writeValue(data, type: .withoutResponse).publish().connect().dispose()
         }
     }
+    
     func bindPeripheral() -> Observable<Characteristic> {
         assert(characteristicDict[.pair] != nil, "characteristic is nil")
-        return characteristicDict[.pair]!.writeValue(Data(bytes:[PairCommand.pair.rawValue]), type: .withResponse)
+        return characteristicDict[.pair]!.writeValue(Data(bytes:FUByteArrayConverter.toUInt8Array(PairCommand.pair.rawValue)), type: .withResponse)
     }
-//    
-//    func readBatteryInfo() {
-//        guard let batteryInfoCharacteristic = characteristicsAvailable[.battery] else { return }
-//        self.activePeripheral?.readValue(for: batteryInfoCharacteristic)
-//    }
-//    
-//    func readLEParams() {
-//        guard let leParamsCharacteristic = characteristicsAvailable[.leParams] else { return }
-//        self.activePeripheral?.readValue(for: leParamsCharacteristic)
-//    }
+    
+    func readBatteryInfo() -> Observable<FUBatteryInfo?> {
+        assert(characteristicDict[.battery] != nil, "characteristic is nil")
+        return MiBandController.readValueFor(characteristic: characteristicDict[.battery], FUBatteryInfo.self)
+    }
+    
+    func readLEParams() -> Observable<FULEParams?> {
+        assert(characteristicDict[.leParams] != nil, "characteristic is nil")
+        return MiBandController.readValueFor(characteristic: characteristicDict[.leParams], FULEParams.self)
+    }
 //    
 //    func writeLEParams(_ leParams: FULEParams) {
 //        guard let leParamsCharacteristic = characteristicsAvailable[.leParams] else { return }
 //        self.activePeripheral?.writeValue(leParams.data(), for: leParamsCharacteristic, type: .withResponse)
 //    }
-//    
-//    func readDateTime() {
-//        guard let dateTimeCharacteristic = characteristicsAvailable[.dateTime] else { return }
-//        self.activePeripheral?.readValue(for: dateTimeCharacteristic)
-//    }
-//    
+    
+    func readDateTime() -> Observable<FUDateTime?> {
+        assert(characteristicDict[.dateTime] != nil, "characteristic is nil")
+        return MiBandController.readValueFor(characteristic: characteristicDict[.dateTime], FUDateTime.self)
+    }
+    
 //    func writeDateTime(_ date: Date) {
 //        guard let dateTimeCharacteristic = characteristicsAvailable[.dateTime] else { return }
 //        var data = FUDateTime(date: date).data()
@@ -202,12 +232,11 @@ class MiBandController: NSObject {
         return characteristicDict[characteristic]!.setNotificationAndMonitorUpdates()
     }
     
-//    func readSensorData() {
-//        guard let sensorDataCharacteristic = characteristicsAvailable[.sensorData] else { return }
-//        self.activePeripheral?.writeValue(Data(bytes: [1]), for: sensorDataCharacteristic, type: .withResponse)
-//        self.activePeripheral?.readValue(for: sensorDataCharacteristic)
-//    }
-//    
+    func readSensorData() -> Observable<FUSensorData?> {
+        assert(characteristicDict[.sensorData] != nil, "characteristic is nil")
+        return MiBandController.readValueFor(characteristic: characteristicDict[.sensorData], FUSensorData.self)
+    }
+    
 //    func startSensorData() {    // for notify sensor data
 //        guard let sensorDataCharacteristic = characteristicsAvailable[.sensorData] else { return }
 //        self.activePeripheral?.writeValue(Data(bytes: [1]), for: sensorDataCharacteristic, type: .withResponse)
@@ -243,6 +272,11 @@ class MiBandController: NSObject {
         var data = Data(bytes: [ControlPointCommand.setTimer.rawValue])
         data.append(alarm.data())
         return characteristicDict[.controlPoint]!.writeValue(data, type: .withResponse)
+    }
+    
+    func getMACAddress() -> Observable<Characteristic> {
+        assert(characteristicDict[.macAddress] != nil, "characteristic is nil")
+        return characteristicDict[.macAddress]!.readValue()
     }
 //
 //    func setRealtimeStepsNofitication(start: Bool) {     // start = true ==> start, start = false ==> stop

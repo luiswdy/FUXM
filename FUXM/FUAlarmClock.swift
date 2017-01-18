@@ -6,7 +6,7 @@
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSData
 
 struct FURepetition: OptionSet {
     var rawValue: UInt8
@@ -24,7 +24,7 @@ struct FURepetition: OptionSet {
     static let everyDay: FURepetition = [ .weekDays, .weekend]
 }
 
-class FUAlarmClock: NSObject {
+class FUAlarmClock: CustomDebugStringConvertible, FUDataInitiable {
     var index: UInt8
     var enable: Bool
     var dateTime: FUDateTime
@@ -43,7 +43,7 @@ class FUAlarmClock: NSObject {
         static let smartWakeUpDisable:UInt8  = 0
     }
     
-    override var debugDescription: String {
+    var debugDescription: String {
         return "index: \(index), enable: \(enable), dateTime: \(dateTime), enableSmartWakeUp: \(enableSmartWakeUp), repetition: \(repetition)"
     }
     
@@ -55,7 +55,7 @@ class FUAlarmClock: NSObject {
         self.repetition = repetition
     }
     
-    init?(data: Data?) {
+    required init?(data: Data?) {
         guard let data = data else { return nil }
         index = data.subdata(in: Consts.indexRange).withUnsafeBytes { return $0.pointee }
         enable = data.subdata(in: Consts.enableRange).withUnsafeBytes({ (pointer: UnsafePointer<UInt8>) -> Bool in

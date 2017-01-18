@@ -1,5 +1,5 @@
 //
-//  FUDataReader.swift
+//  FUByteArrayConverter.swift
 //  FUXM
 //
 //  Created by Luis Wu on 1/2/17.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FUDataReader {
+class FUByteArrayConverter {
     // Convert from Data
     static func fromUInt8Array<T>(_ value: [UInt8], _: T.Type) -> T {
         return value.withUnsafeBytes{

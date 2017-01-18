@@ -6,16 +6,16 @@
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSData
 
-class FUSensorData: NSObject {
+class FUSensorData: CustomDebugStringConvertible, FUDataInitiable {
     let counter: UInt16
     private(set) var step: UInt16
     private(set) var axis1: Int16
     private(set) var axis2: Int16
     private(set) var axis3: Int16
     
-    override var debugDescription: String {
+    var debugDescription: String {
         return "counter: \(counter), step: \(step), axis1: \(axis1), axis2: \(axis2), axis3: \(axis3)"
     }
     
@@ -23,10 +23,10 @@ class FUSensorData: NSObject {
         
     }
     
-    init?(data: Data?) {
+    required init?(data: Data?) {
         guard let data = data else { return nil }
         let rawBytes = [UInt8](data)
-        // exquivalent to:
+        // equivalent to:
 //        var rawBytes = [UInt8](repeatElement(0, count: data.count))
 //        data.copyBytes(to: &rawBytes, count: data.count)
         
@@ -51,6 +51,5 @@ class FUSensorData: NSObject {
 //            debugPrint("[loop] counter = \(counter), step: \(step), axis1 = \(axis1), axis2 = \(axis2), axis3 = \(axis3)")
 //        }
         debugPrint("counter = \(counter), step: \(step), axis1 = \(axis1), axis2 = \(axis2), axis3 = \(axis3)")
-        super.init()
     }
 }

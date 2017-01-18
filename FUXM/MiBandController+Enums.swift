@@ -53,7 +53,7 @@ extension MiBandController {
         unknown7        = 0xfee3,
         unknown8        = 0xfec7,  // characteristics of unknown service
         unknown9        = 0xfec8,
-        unknown10       = 0xfec9,
+        macAddress      = 0xfec9,
         unknown11       = 0xfed0,
         unknown12       = 0xfed1
         
@@ -74,8 +74,8 @@ extension MiBandController {
         static let miBand2CharacteristicKeys = ["\(unknown1)", "\(unknown2)", "\(unknown3)", "\(unknown4)",
             "\(unknown5)", "\(unknown6)", "\(unknown7)"]
         // characteristics - unknown service
-        static let unknownCharacteristics = [unknown8, unknown9, unknown10]
-        static let unknownCharacteristicKeys = ["\(unknown8)", "\(unknown9)", "\(unknown10)"]
+        static let unknownCharacteristics = [unknown8, unknown9, macAddress]
+        static let unknownCharacteristicKeys = ["\(unknown8)", "\(unknown9)", "\(macAddress)"]
         // all values
         static let allValues: [FUCharacteristicUUID] = FUCharacteristicUUID.iasCharacteristics
             + FUCharacteristicUUID.miBandCharacteristics
@@ -89,39 +89,6 @@ extension MiBandController {
         
     }
     
-    // Values may receive from
-    // optional func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?)
-    // after setNotify to characteristic notification (0xff03)
-    enum FUNotification: UInt8 {
-        case
-        //    unknown = -0x1,
-        normal                  = 0x0,
-        firmwareUpdateFailed    = 0x1,
-        firmwareUpdateSuccess   = 0x2,
-        connParamUpdateFailed   = 0x3,
-        connParamUpdateSuccess  = 0x4,
-        authSuccess             = 0x5,
-        authFailed              = 0x6,
-        fitnessGoalAchieved     = 0x7,
-        setLatencySuccess       = 0x8,
-        resetAuthFailed         = 0x9,
-        resetAuthSuccess        = 0x10,
-        firmwareCheckFailed     = 0x11,
-        firmwareCheckSuccess    = 0x12,
-        motorNotify             = 0x13,
-        motorCall               = 0x14,
-        motorDisconnect         = 0x15,
-        motorSmartAlarm         = 0x16,
-        motorAlarm              = 0x17,
-        motorGoal               = 0x18,
-        motorAuth               = 0x19,
-        motorShutdown           = 0x20,
-        motorAuthSuccess        = 0x21,
-        motorTest               = 0x22,
-        // I remember I got 0x18 !? while keeping shaking mi band at starting the app
-        pairCancel              = 0xef,
-        deviceMalfunction       = 0xff
-    }
     
     enum FUActivityType: Int8 {
         case
@@ -130,15 +97,6 @@ extension MiBandController {
         deepSleep   = 4,
         lightSleep  = 5,
         charging    = 6
-    }
-    
-    enum FUBatteryStatus: UInt8 {
-        case
-        normal          = 0,
-        low             = 1,
-        charging        = 2,
-        chargingFull    = 3,
-        chargeOff       = 4
     }
     
     /* References ..... somewhat contradicted to each other. My implementation is based on android on
@@ -215,7 +173,7 @@ extension MiBandController {
         stopMotorVibrate                    = 0x13
     }
     
-    enum PairCommand: UInt8 {
-        case pair = 0x2, unpair = 0xff // (or 0xfff? with UInt16?)
+    enum PairCommand: UInt16 {
+        case pair = 0x2, unpair = 0xfff
     }
 }

@@ -6,9 +6,9 @@
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSData
 
-class FUStatistics: NSObject {
+class FUStatistics: CustomDebugStringConvertible, FUDataInitiable {
     var wake: UInt32        // msec
     var vibrate: UInt32     // msec
     var light: UInt32       // msec
@@ -23,11 +23,11 @@ class FUStatistics: NSObject {
         static let advRange: Range<Data.Index> = 16..<20
     }
     
-    override var debugDescription: String {
+    var debugDescription: String {
         return "wake: \(wake), vibrate: \(vibrate), light: \(light), conn: \(conn), adv: \(adv)"
     }
     
-    init?(data: Data?) {
+    required init?(data: Data?) {
         guard let data = data else { return nil }
         wake = data.subdata(in: Consts.wakeRange).withUnsafeBytes( { ($0 as UnsafePointer<UInt32>).pointee })
         vibrate = data.subdata(in: Consts.vibrateRange).withUnsafeBytes( { ($0 as UnsafePointer<UInt32>).pointee })

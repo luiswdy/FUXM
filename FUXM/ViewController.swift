@@ -113,10 +113,11 @@ class ViewController: UIViewController {
                                 HUD.flash(.success, delay: Consts.hudFlashDelay)
                                 // TEST TRY
                                 self.miController.readDeviceInfo().subscribe(onNext: { [unowned self] in
-                                    self.deviceInfo = FUDeviceInfo(data: $0.value)
+                                    self.deviceInfo = $0
                                     debugPrint("deviceInfo: \(self.deviceInfo)")
                                     self.miController.setNotify(enable: true, characteristic: .notification)
-                                        .subscribe(onNext: { debugPrint("\($0)")
+                                        .subscribe(onNext: { [unowned self] in
+                                            self.handleNotifications(from: $0)
                                         },
                                                    onError: { debugPrint("\($0)")},
                                                    onCompleted: { debugPrint("completed")},
@@ -126,6 +127,16 @@ class ViewController: UIViewController {
                                     self.miController.bindPeripheral().publish().connect().addDisposableTo(self.disposeBag)
                                     let dateTime = FUDateTime(year: 17, month: 1, day: 1, hour: 6, minute: 30, second: 00)
                                     self.miController.setAlarm(alarm: FUAlarmClock(index: 0, enable: true, dateTime: dateTime, enableSmartWakeUp: true, repetition: FURepetition.weekDays)).subscribe(onCompleted: { debugPrint("Alarm set") }).addDisposableTo(self.disposeBag)
+                                    self.miController.getMACAddress().subscribe(onNext: {
+                                        if let value = $0.value {
+                                            let mac = value.withUnsafeBytes({ (pointer: UnsafePointer<UInt8>) -> UInt64 in
+                                                return pointer.withMemoryRebound(to: UInt64.self, capacity: MemoryLayout<UInt64>.size, { (pointer) -> UInt64 in
+                                                    return pointer.pointee & 0xffffffffffff
+                                                })
+                                            })
+                                            debugPrint("mac: \(String(mac.bigEndian, radix:GlobalConsts.hexRadix))")    // should ignore last two bytes
+                                        }
+                                    }).addDisposableTo(self.disposeBag)
                                 }).addDisposableTo(self.disposeBag)
                             }
                         }).addDisposableTo(self.disposeBag)
@@ -136,28 +147,13 @@ class ViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    /*
-    
-    func handleNotifications(from characteristic: CBCharacteristic) {
+    func handleNotifications(from characteristic: Characteristic) {
         debugPrint("\(#function) characteristic: \(characteristic)")
-        if let value = characteristic.value {
-            
-            if characteristic.uuid.uuidString.compare("FF0E") == .orderedSame {
-               debugPrint("characteristic.value = \(value)")
-            }
-            
-            guard value.count > 0 else {
-                debugPrint("value.count == 0. do nothing")
-                return
-            }
-            
-            let notification = Notifications(rawValue: value.withUnsafeBytes({ (pointer: UnsafePointer<UInt8>) -> UInt8 in
-                return pointer.pointee
-            }))
-            
-            guard notification != nil else { return }
-            
-            switch notification! {
+        if let value = characteristic.value,
+            let notification = FUNotification(rawValue: value.withUnsafeBytes({ (pointer: UnsafePointer<UInt8>) -> UInt8 in return pointer.pointee })),
+            value.count > 0 {
+            debugPrint("incoming notification: \(notification)")
+            switch notification {
             case .normal:
                 break
             case .firmwareUpdateFailed:
@@ -176,7 +172,7 @@ class ViewController: UIViewController {
                 break
             case .setLatencySuccess:
                 // 0 no alert, 1 mild alert, 2 high alert , 4 ：vibrate only
-//                pairingPeripheral?.writeValue(Data(bytes:[4]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
+                //                pairingPeripheral?.writeValue(Data(bytes:[4]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
                 break
             case .resetAuthFailed:
                 break
@@ -188,11 +184,11 @@ class ViewController: UIViewController {
                 break
             case .motorNotify:
                 // 0 no alert, 1 mild alert, 2 high alert , 4 ：vibrate only
-//                pairingPeripheral?.writeValue(Data(bytes:[1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
+                //                pairingPeripheral?.writeValue(Data(bytes:[1]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
                 break
             case .motorCall:
                 // 0 no alert, 1 mild alert, 2 high alert , 4 ：vibrate only
-//                pairingPeripheral?.writeValue(Data(bytes:[2]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
+                //                pairingPeripheral?.writeValue(Data(bytes:[2]), for: characteristicsAvailable[.alertLevel]!, type: .withoutResponse)
                 break
             case .motorDisconnect:
                 break
@@ -217,7 +213,5 @@ class ViewController: UIViewController {
             }
         }
     }
-    
-    }*/
 }
 

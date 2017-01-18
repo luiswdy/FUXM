@@ -6,7 +6,7 @@
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSData
 
 enum FUGender: UInt8 {
     case
@@ -20,7 +20,7 @@ enum FUAuthType: UInt8 {
     retainData
 }
 
-class FUUserInfo: NSObject {
+class FUUserInfo: CustomDebugStringConvertible, FUDataInitiable {
     private struct Consts {
         static let uidRange: Range<Data.Index> = 0..<4
         static let genderRange: Range<Data.Index> = 4..<5
@@ -39,7 +39,7 @@ class FUUserInfo: NSObject {
     private(set) var type: FUAuthType
     private(set) var alias: String
     
-    override var debugDescription: String {
+    var debugDescription: String {
         return "uid: \(uid), "
             + "gender: \(gender), "
             + "age: \(age), "
@@ -59,10 +59,9 @@ class FUUserInfo: NSObject {
         self.weight = weight
         self.type = type
         self.alias = alias
-        super.init()
     }
     
-    convenience init(data: Data?) {
+    required convenience init(data: Data?) {
         self.init()
         parseData(data)
     }

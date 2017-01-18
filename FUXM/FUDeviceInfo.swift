@@ -5,9 +5,9 @@
 //  Created by Luis Wu on 1/12/17.
 //  Copyright © 2017 Luis Wu. All rights reserved.
 //
-import Foundation
+import Foundation.NSData
 
-class FUDeviceInfo: NSObject {
+class FUDeviceInfo: CustomDebugStringConvertible, FUDataInitiable {
     let deviceID: String
     let mac: String
     let salt: UInt8
@@ -17,7 +17,7 @@ class FUDeviceInfo: NSObject {
     let appearance: UInt
     let hardwareVer: UInt
     
-    override var debugDescription: String {
+    var debugDescription: String {
         return "deviceID: \(deviceID), "
             + "MAC: \(mac), "
             + "salt: \(salt), "
