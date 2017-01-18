@@ -13,8 +13,8 @@ enum FUActiviyDataMode: Int {
 }
 
 class FUActivityReader: CustomDebugStringConvertible {
-    var metadata: FUActivityMetadata
-    var activitySegments: [FUActivitySegment]
+//    var metadata: FUActivityMetadata
+//    var activitySegments: [FUActivitySegment]
     
     private struct Consts {
         static let activityMetadataLength = 11
@@ -30,11 +30,13 @@ class FUActivityReader: CustomDebugStringConvertible {
     
     init?(data: Data?, supportHeartRate: Bool = false) {    // TODO: default no here as I have only Mi band 1. It should come from FUDeviceInfo
         guard let data = data else { return nil }
+//        metadata = FUActivityMetadata()
+//        activitySegments = []
         
         if data.count == Consts.activityMetadataLength {
-            handleMetadata(data: data, supportHeartRate: supportHeartRate)    // metadata
+            /*metadata = */ handleMetadata(data: data, supportHeartRate: supportHeartRate)    // metadata
         } else {
-            handleSegment(data: data)    // activity segment
+            /*activitySegments = */handleSegment(data: data)    // activity segment
         }
         
         return nil  // TODO
@@ -43,7 +45,7 @@ class FUActivityReader: CustomDebugStringConvertible {
     private func handleMetadata(data: Data, supportHeartRate: Bool) /*-> FUActivityMetadata*/ {
         // byte 0 is the data type: 1 means that each minute is represented by a triplet of bytes
         
-        let dataType: FUActiviyDataMode = FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } )) != nil ? FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } )) : .dataLengthByte
+        let dataType: FUActiviyDataMode = FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } )) != nil ? FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } ))! : .dataLengthByte
         // bytes 1 ~ 6 represents a timestamp
         let timestamp = FUDateTime(data: data.subdata(in: Consts.metadataTimestampRange))
         // counter for all data held by the band
