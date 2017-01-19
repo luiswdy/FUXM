@@ -117,7 +117,11 @@ class MiBandController: NSObject {
     }
     
     func connect(_ peripheral: ScannedPeripheral) -> Observable<Void> {
-        return peripheral.peripheral.connect()
+        return connect(peripheral.peripheral)
+    }
+    
+    func connect(_ peripheral: Peripheral) -> Observable<Void> {
+        return peripheral.connect()
             .flatMap { $0.discoverServices(Consts.miBandServiceUUIDs) }
             .flatMap { Observable.from($0) }
             .flatMap { $0.discoverCharacteristics(nil) }
@@ -133,6 +137,9 @@ class MiBandController: NSObject {
             })
     }
     
+    func listenOnRestoreState() -> Observable<RestoredState> {
+        return btManager.listenOnRestoredState()
+    }
     
     // Generic utility function
     static private func readValueFor<T: FUDataInitiable>(characteristic: Characteristic?, _ type: T.Type) -> Observable<T?> {
@@ -141,10 +148,22 @@ class MiBandController: NSObject {
                 return T(data: characteristic.value)
             }
         } else {
-            return Observable<T?>.create( {
+            return Observable<T?>.create {
                 $0.onNext(nil)
+                $0.onCompleted()
                 return Disposables.create() // no-op disposable
-            } )
+            }
+        }
+    }
+    
+    static private func writeValueTo(characteristic: Characteristic?, data: Data?, type: CBCharacteristicWriteType) -> Observable<Characteristic> {
+        if let characteristic = characteristic, let data = data {
+            return characteristic.writeValue(data, type: type)
+        } else {
+            return Observable<Characteristic>.create {
+                $0.onCompleted()    // straight finishes the signal
+                return Disposables.create()  // no-op disposable
+            }
         }
     }
     
@@ -226,9 +245,8 @@ class MiBandController: NSObject {
 //        self.activePeripheral?.writeValue(data, for: dateTimeCharacteristic, type: .withResponse)
 //    }
 //    
-    func setNotify(enable: Bool, characteristic: FUCharacteristicUUID) -> Observable<Characteristic> {
+    func setNotificationAndMonitorUpdates(characteristic: FUCharacteristicUUID) -> Observable<Characteristic> {
         assert(characteristicDict[characteristic] != nil, "characteristic is nil")
-//        return characteristicDict[characteristic]!.setNotifyValue(enable)
         return characteristicDict[characteristic]!.setNotificationAndMonitorUpdates()
     }
     
@@ -262,11 +280,11 @@ class MiBandController: NSObject {
 //        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.setFitnessGoal.rawValue, 0x0, UInt8(truncatingBitPattern: steps), UInt8(truncatingBitPattern: steps >> 8)]), for: controlPointCharacteristic, type: .withResponse)
 //    }
 //    
-//    func fetchData() {
-//        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
-//        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.fetchData.rawValue]), for: controlPointCharacteristic, type: .withResponse)
-//    }
-//    
+    func fetchActivityData() -> Observable<Characteristic> {
+        assert(characteristicDict[.controlPoint] != nil, "characteristic is nil")
+        return MiBandController.writeValueTo(characteristic: characteristicDict[.controlPoint], data: Data(bytes: [ControlPointCommand.fetchData.rawValue]), type: .withResponse)
+    }
+//
     func setAlarm(alarm: FUAlarmClock) -> Observable<Characteristic> {
         assert(characteristicDict[.controlPoint] != nil, "characteristic is nil")
         var data = Data(bytes: [ControlPointCommand.setTimer.rawValue])

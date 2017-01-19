@@ -22,25 +22,51 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="BDK-go-o1W">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="BDK-go-o1W">
                                 <rect key="frame" x="16" y="0.0" width="343" height="667"/>
                                 <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6TG-kn-8Ld">
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="279"/>
+                                        <subviews>
+                                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="223-DI-INA">
+                                                <rect key="frame" x="11" y="10" width="320" height="219"/>
+                                                <date key="date" timeIntervalSinceReferenceDate="506441507.872253">
+                                                    <!--2017-01-18 14:11:47 +0000-->
+                                                </date>
+                                            </datePicker>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ll1-WF-zAA">
+                                                <rect key="frame" x="100.5" y="239" width="141" height="30"/>
+                                                <state key="normal" title="Set alarm (everyday)"/>
+                                                <connections>
+                                                    <action selector="setAlarmWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Q1z-EG-Jqy"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="Ll1-WF-zAA" firstAttribute="top" secondItem="223-DI-INA" secondAttribute="bottom" constant="10" id="Gwa-Tq-m2A"/>
+                                            <constraint firstItem="Ll1-WF-zAA" firstAttribute="centerX" secondItem="6TG-kn-8Ld" secondAttribute="centerX" id="SFN-nt-q4c"/>
+                                            <constraint firstItem="223-DI-INA" firstAttribute="centerX" secondItem="6TG-kn-8Ld" secondAttribute="centerX" id="SPS-GM-oMq"/>
+                                            <constraint firstAttribute="bottom" secondItem="Ll1-WF-zAA" secondAttribute="bottom" constant="10" id="fUl-yn-NWv"/>
+                                            <constraint firstItem="223-DI-INA" firstAttribute="top" secondItem="6TG-kn-8Ld" secondAttribute="top" constant="10" id="nL3-Yf-F1H"/>
+                                        </constraints>
+                                    </view>
                                     <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O2m-Jd-i3u">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="222.5"/>
+                                        <rect key="frame" x="0.0" y="378.5" width="343" height="30"/>
                                         <state key="normal" title="scan"/>
                                         <connections>
                                             <action selector="scanWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="anW-Yp-9J7"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hpl-e4-OUG">
-                                        <rect key="frame" x="0.0" y="222.5" width="343" height="222"/>
+                                        <rect key="frame" x="0.0" y="507.5" width="343" height="30"/>
                                         <state key="normal" title="stop scan"/>
                                         <connections>
                                             <action selector="stopScanWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="X8s-D3-tRQ"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E60-3Q-ssv">
-                                        <rect key="frame" x="0.0" y="444.5" width="343" height="222.5"/>
+                                        <rect key="frame" x="0.0" y="637" width="343" height="30"/>
                                         <state key="normal" title="vibrate"/>
                                         <connections>
                                             <action selector="vibrateWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="SJ1-hD-Nfs"/>
@@ -58,13 +84,16 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="datePicker" destination="223-DI-INA" id="5jQ-uM-FjD"/>
                         <outlet property="scanBtn" destination="O2m-Jd-i3u" id="WM1-xp-aHG"/>
+                        <outlet property="setAlarm" destination="Ll1-WF-zAA" id="GpD-a7-3xU"/>
                         <outlet property="stopScanBtn" destination="hpl-e4-OUG" id="25d-48-m0E"/>
                         <outlet property="vibrateBtn" destination="E60-3Q-ssv" id="52z-6X-GcU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="117.59999999999999" y="123.68815592203899"/>
         </scene>
     </scenes>
 </document>

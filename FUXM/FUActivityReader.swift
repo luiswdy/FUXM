@@ -7,53 +7,88 @@
 //
 
 import Foundation.NSData
+import RxSwift
 
-enum FUActiviyDataMode: Int {
+enum FUActivityReadingState: Int {
+    case
+    initial = 0,    // waiting for metadata
+    reading,        // reading data
+    done            // read all data
+}
+
+enum FUActivityDataMode: Int {
     case dataLengthByte = 0, dataLengthMinute = 1
 }
 
 class FUActivityReader: CustomDebugStringConvertible {
-//    var metadata: FUActivityMetadata
-//    var activitySegments: [FUActivitySegment]
+    var metadata: FUActivityMetadata
+    var activities: [FUActivity]
+    var buffer: Data
+    var state = FUActivityReadingState.initial
+    let supportHeartRate: Bool
     
     private struct Consts {
         static let activityMetadataLength = 11
         static let metadataTypeRange: Range<Data.Index> = 0..<1
-        static let metadataTimestampRange: Range<Data.Index> = 1..<6
-        static let metadataTotalDataToRead: Range<Data.Index> = 6..<8
-        
+        static let metadatatimestampRange: Range<Data.Index> = 1..<7
+        static let metadataTotalDataToReadRange: Range<Data.Index> = 7..<9
+        static let metadataDataUntilNextHeaderRange: Range<Data.Index> = 9..<11
     }
     
     var debugDescription: String {
         return "TODO"
     }
     
-    init?(data: Data?, supportHeartRate: Bool = false) {    // TODO: default no here as I have only Mi band 1. It should come from FUDeviceInfo
-        guard let data = data else { return nil }
-//        metadata = FUActivityMetadata()
-//        activitySegments = []
-        
-        if data.count == Consts.activityMetadataLength {
-            /*metadata = */ handleMetadata(data: data, supportHeartRate: supportHeartRate)    // metadata
-        } else {
-            /*activitySegments = */handleSegment(data: data)    // activity segment
-        }
-        
-        return nil  // TODO
+    init(supportHeartRate: Bool) {
+        self.metadata = FUActivityMetadata()
+        self.activities = []
+        self.buffer = Data()
+        self.supportHeartRate = supportHeartRate
     }
     
-    private func handleMetadata(data: Data, supportHeartRate: Bool) /*-> FUActivityMetadata*/ {
+    func handleIncomingData(_ data: Data?) -> Observable<[FUActivity]> {
+        return Observable.create({ (observer) -> Disposable in
+            objc_sync_enter(self.buffer)
+            
+            debugPrint("\(Date()) - data.count = \(data?.count)")
+            
+            if let data = data, data.count == Consts.activityMetadataLength {
+//                assert(self.state == .initial, "why got metadata if it's not done?")
+                
+                self.metadata = self.handleMetadata(data: data, supportHeartRate: self.supportHeartRate)
+                self.state = .reading
+            } else if let data = data, self.state == .reading {
+//                assert(self.state == .reading, "why not reading?")
+                self.buffer.append(data)
+//                self.handleData(data: data)
+                if self.buffer.count == Int(self.metadata.dataUntilNextHeader) {
+                    self.convertBufferIntoActivities(baseTimestamp: self.metadata.timestamp)
+                    observer.on(.next(Array(self.activities))) // onNext when a chunk is loaded (TODO)
+                    observer.on(.completed) // onCompleted when on more data to load
+                    self.state = .done      // end of the chunk
+                    assert(self.metadata.dataUntilNextHeader >= 0, "dataUntilNextHeader < 0. why?")
+                }
+            } else {
+                // do nothing
+//                assertionFailure("Should not get here")
+            }
+            objc_sync_exit(self.buffer)
+            return Disposables.create() // no-op
+        })
+    }
+    
+    private func handleMetadata(data: Data, supportHeartRate: Bool) -> FUActivityMetadata {
         // byte 0 is the data type: 1 means that each minute is represented by a triplet of bytes
         
-        let dataType: FUActiviyDataMode = FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } )) != nil ? FUActiviyDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } ))! : .dataLengthByte
+        let dataType: FUActivityDataMode = FUActivityDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } )) != nil ? FUActivityDataMode(rawValue: data.subdata(in: Consts.metadataTypeRange).withUnsafeBytes( { return $0.pointee } ))! : .dataLengthByte
         // bytes 1 ~ 6 represents a timestamp
-        let timestamp = FUDateTime(data: data.subdata(in: Consts.metadataTimestampRange))
+        let timestamp = FUDateTime(data: data.subdata(in: Consts.metadatatimestampRange))
         // counter for all data held by the band
-        var totalDataToRead = data.subdata(in: Consts.metadataTotalDataToRead).withUnsafeBytes( { return ($0 as UnsafePointer<UInt16>).pointee })
+        var totalDataToRead = data.subdata(in: Consts.metadataTotalDataToReadRange).withUnsafeBytes( { return ($0 as UnsafePointer<UInt16>).pointee })
         let bytesPerMinute = UInt16(dataType == .dataLengthMinute ? getBytesPerMinuteOfActivityData(supportHeartRate: supportHeartRate) : 1)
         totalDataToRead = totalDataToRead * bytesPerMinute
         // counter of this data block
-        var dataUntilNextHeader = data.subdata(in: Consts.metadataTotalDataToRead).withUnsafeBytes( { return ($0 as UnsafePointer<UInt16>).pointee })
+        var dataUntilNextHeader = data.subdata(in: Consts.metadataDataUntilNextHeaderRange).withUnsafeBytes( { return ($0 as UnsafePointer<UInt16>).pointee })
         dataUntilNextHeader = dataUntilNextHeader * bytesPerMinute
         
         // there is a total of totalDataToRead that will come in chunks (3 or 4 bytes per minute if dataType == 1 (FUActiviyDataMode.dataLengthMinute)),
@@ -64,14 +99,43 @@ class FUActivityReader: CustomDebugStringConvertible {
         debugPrint("totalDataToRead: \(totalDataToRead), length: \(Int(totalDataToRead) / getBytesPerMinuteOfActivityData(supportHeartRate: supportHeartRate)) minute(s)")
         debugPrint("dataUntilNextHeader: \(dataUntilNextHeader), length: \(Int(dataUntilNextHeader) / getBytesPerMinuteOfActivityData(supportHeartRate: supportHeartRate)) minute(s)")
         debugPrint("timestamp: \(timestamp), magic byte: \(dataUntilNextHeader)")
-    }
-    
-    private func handleSegment(data: Data) /*-> FUActivitySegment*/ {
-        
+        metadata.dataType = dataType
+        if let dateTime = timestamp?.toDate() {
+            metadata.timestamp = dateTime
+        }
+        metadata.totalDataToRead = totalDataToRead
+        metadata.dataUntilNextHeader = dataUntilNextHeader
+        let convertedtimestamp = timestamp?.toDate() != nil ? timestamp!.toDate()! : Date.distantPast
+        return FUActivityMetadata(dataType: dataType, timestamp: convertedtimestamp, totalDataToRead: totalDataToRead, bytesPerMinute: bytesPerMinute, dataUntilNextHeader: dataUntilNextHeader)
     }
     
     private func getBytesPerMinuteOfActivityData(supportHeartRate: Bool) -> Int {
-        return supportHeartRate ? 4: 3
+        return supportHeartRate ? 4 : 3
+    }
+    
+    private func convertBufferIntoActivities(baseTimestamp: Date) {
+            objc_sync_enter(self.buffer)
+        assert(buffer.count % getBytesPerMinuteOfActivityData(supportHeartRate: self.supportHeartRate) == 0, "something is wrong")
+        var minuteOffset = 0
+        while buffer.count > 0 {
+            let activity = buffer.withUnsafeBytes({ (pointer: UnsafePointer<UInt8>) -> FUActivity in
+                let timestamp = baseTimestamp.addingTimeInterval( TimeInterval(60 * minuteOffset) )
+                debugPrint("DEBUG: category = \(Int8(pointer.pointee))")
+                let category = FUActivityCategory(rawValue: Int8(pointer.pointee))  == nil ? FUActivityCategory.activity : FUActivityCategory(rawValue: Int8(pointer.pointee))!
+                let intensity = pointer.advanced(by: 1).pointee
+                let steps = pointer.advanced(by: 2).pointee
+                var heartRate: UInt8? = nil
+                if supportHeartRate {
+                    heartRate = pointer.advanced(by: 3).pointee
+                }
+                return FUActivity(timestamp: timestamp, category: category, intensity: intensity, steps: steps, heartRate: heartRate)
+            })
+            self.activities.append(activity)
+            minuteOffset = minuteOffset + 1
+//            buffer = buffer.subdata(in: getBytesPerMinuteOfActivityData(supportHeartRate: self.supportHeartRate) ..< buffer.count)
+            buffer.removeFirst(getBytesPerMinuteOfActivityData(supportHeartRate: self.supportHeartRate))
+        }
+            objc_sync_exit(self.buffer)
     }
 }
 
@@ -89,7 +153,7 @@ class FUActivityReader: NSObject {
     
     struct Consts {
         static let fragmentTypeRange: Range<Data.Index> = 0..<1
-        static let fragmentTimestampRange: Range<Data.Index> = 1..<7
+        static let fragmenttimestampRange: Range<Data.Index> = 1..<7
         static let fragmentDurationRange: Range<Data.Index> = 7..<9
         static let fragmentCountRange: Range<Data.Index> = 9..<11
         static let intensityRange: Range<Data.Index> = 0..<1
@@ -120,10 +184,10 @@ class FUActivityReader: NSObject {
         switch state {
         case .ready:
             currentFragment.type = buffer.subdata(in: Consts.fragmentTypeRange).withUnsafeBytes { return $0.pointee }
-            if let tmpTimestamp = FUDateTime(data: buffer.subdata(in: Consts.fragmentTimestampRange)) {
-                currentFragment.timestamp = tmpTimestamp
+            if let tmptimestamp = FUDateTime(data: buffer.subdata(in: Consts.fragmenttimestampRange)) {
+                currentFragment.timestamp = tmptimestamp
             } else {
-                assert(false, "tmpTimestamp sall not be nil")
+                assert(false, "tmptimestamp sall not be nil")
             }
             currentFragment.duration = buffer.subdata(in: Consts.fragmentDurationRange).withUnsafeBytes { return ($0 as UnsafePointer<UInt16>).pointee }
             currentFragment.count = buffer.subdata(in: Consts.fragmentCountRange).withUnsafeBytes { return ($0 as UnsafePointer<UInt16>).pointee }

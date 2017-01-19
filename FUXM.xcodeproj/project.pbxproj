@@ -37,7 +37,7 @@
 		E95FF1601E2F5AD30049072C /* FUDataInitiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95FF15F1E2F5AD30049072C /* FUDataInitiable.swift */; };
 		E95FF1621E2F63760049072C /* FULEDColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95FF1611E2F63760049072C /* FULEDColor.swift */; };
 		E95FF1641E2F75AE0049072C /* FUActivityMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95FF1631E2F75AE0049072C /* FUActivityMetadata.swift */; };
-		E95FF1661E2F75C00049072C /* FUActivitySegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95FF1651E2F75C00049072C /* FUActivitySegment.swift */; };
+		E95FF1661E2F75C00049072C /* FUActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95FF1651E2F75C00049072C /* FUActivity.swift */; };
 		E98E81B71E1A7B450062B9A0 /* FUByteArrayConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E81B61E1A7B450062B9A0 /* FUByteArrayConverter.swift */; };
 		E9C17E631E2CA981006811BD /* FUActivityData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C17E621E2CA981006811BD /* FUActivityData.swift */; };
 		E9C17E651E2CA98B006811BD /* FUActivityDataFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C17E641E2CA98B006811BD /* FUActivityDataFragment.swift */; };
@@ -102,11 +102,11 @@
 		E95AA0F71E28BE2F009FD612 /* FUDateTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUDateTime.swift; sourceTree = "<group>"; };
 		E95FF15F1E2F5AD30049072C /* FUDataInitiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUDataInitiable.swift; sourceTree = "<group>"; };
 		E95FF1611E2F63760049072C /* FULEDColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FULEDColor.swift; sourceTree = "<group>"; };
-		E95FF1631E2F75AE0049072C /* FUActivityMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUActivityMetadata.swift; sourceTree = "<group>"; };
-		E95FF1651E2F75C00049072C /* FUActivitySegment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUActivitySegment.swift; sourceTree = "<group>"; };
+		E95FF1631E2F75AE0049072C /* FUActivityMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = FUActivityMetadata.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E95FF1651E2F75C00049072C /* FUActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = FUActivity.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E98E81B61E1A7B450062B9A0 /* FUByteArrayConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FUByteArrayConverter.swift; path = Utilities/FUByteArrayConverter.swift; sourceTree = "<group>"; };
 		E9C17E621E2CA981006811BD /* FUActivityData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUActivityData.swift; sourceTree = "<group>"; };
-		E9C17E641E2CA98B006811BD /* FUActivityDataFragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUActivityDataFragment.swift; sourceTree = "<group>"; };
+		E9C17E641E2CA98B006811BD /* FUActivityDataFragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = FUActivityDataFragment.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,7 +247,7 @@
 				E95FF1611E2F63760049072C /* FULEDColor.swift */,
 				E954D75E1E2C625B005F3664 /* FUActivityReader.swift */,
 				E95FF1631E2F75AE0049072C /* FUActivityMetadata.swift */,
-				E95FF1651E2F75C00049072C /* FUActivitySegment.swift */,
+				E95FF1651E2F75C00049072C /* FUActivity.swift */,
 			);
 			name = DataModels;
 			sourceTree = "<group>";
@@ -575,7 +575,7 @@
 				E91642011DF840C300B89E8E /* ViewController.swift in Sources */,
 				E954D7611E2C841B005F3664 /* FUCRC8Util.swift in Sources */,
 				E95FF1621E2F63760049072C /* FULEDColor.swift in Sources */,
-				E95FF1661E2F75C00049072C /* FUActivitySegment.swift in Sources */,
+				E95FF1661E2F75C00049072C /* FUActivity.swift in Sources */,
 				E95960731E2B4D0E00DA5D54 /* FUSensorData.swift in Sources */,
 				E944DB191E27202A006A5110 /* MiBandUserDefaults.swift in Sources */,
 				E954D75F1E2C625B005F3664 /* FUActivityReader.swift in Sources */,
