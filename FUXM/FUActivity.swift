@@ -23,8 +23,27 @@ struct FUActivity: CustomDebugStringConvertible {
     let steps: UInt8
     let heartRate: UInt8?
     
+    struct Consts {
+        static let intensityOffset = 1
+        static let stepsOffset = 2
+        static let heartRateOffset = 3
+    }
+    
     var debugDescription: String {
         return "\(timestamp), \(category), \(intensity), \(steps), \(heartRate)"
+    }
+    
+    init?(timestamp: Date, isSupportHeartRate: Bool, data: Data?) {
+        guard let data = data, data.count > 0 else { return nil }
+        self.timestamp = timestamp
+        if let category = FUActivityCategory(rawValue: data.withUnsafeBytes({ return $0.pointee })) {
+            self.category = category
+        } else {
+            self.category = .activity   // fallback as we don't know what kind of activity it is
+        }
+        self.intensity = data.withUnsafeBytes({ return $0.advanced(by: Consts.intensityOffset).pointee })
+        self.steps = data.withUnsafeBytes({ return $0.advanced(by: Consts.stepsOffset).pointee })
+        self.heartRate = isSupportHeartRate ? data.withUnsafeBytes({ return $0.advanced(by: Consts.heartRateOffset).pointee }) : nil
     }
     
     init(timestamp: Date, category: FUActivityCategory, intensity: UInt8, steps: UInt8, heartRate: UInt8? = nil) {
