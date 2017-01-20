@@ -265,19 +265,19 @@ class MiBandController: NSObject {
         assert(characteristicDict[.macAddress] != nil, "characteristic is nil")
         return characteristicDict[.macAddress]!.readValue()
     }
-    // TODO - to be confirmed if they work
-//
-//    func setRealtimeStepsNofitication(start: Bool) {     // start = true ==> start, start = false ==> stop
-//        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
-//        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.setRealtimeStepNotification.rawValue, start ? 1 : 0]), for: controlPointCharacteristic, type: .withResponse)
-//    
-//    }
-//    
-//    func setSensorRead(start: Bool) {     // start = true ==> start sensor read, start = false ==> stop sensor read
-//        guard let controlPointCharacteristic = characteristicsAvailable[.controlPoint] else { return }
-//        self.activePeripheral?.writeValue(Data(bytes: [ControlPointCommand.getSensorData.rawValue, start ? 1 : 0]), for: controlPointCharacteristic, type: .withResponse)
-//        
-//    }
+    
+    func setRealtimeStepsNofitication(start: Bool) -> Observable<Characteristic> {     // start = true ==> start, start = false ==> stop
+        return MiBandController.writeValueTo(characteristic: characteristicDict[.controlPoint],
+                                             data: Data(bytes: [ControlPointCommand.setRealtimeStepNotification.rawValue, start ? 1 : 0]),
+                                             type: .withResponse)
+    }
+    
+    func setSensorRead(start: Bool) -> Observable<Characteristic> {     // start = true ==> start sensor read, start = false ==> stop sensor read
+        return MiBandController.writeValueTo(characteristic: characteristicDict[.controlPoint],
+                                             data: Data(bytes: [ControlPointCommand.getSensorData.rawValue, start ? 1 : 0]),
+                                             type: .withResponse)
+        
+    }
     // MARK - private methods
     
     // Generic utility function
