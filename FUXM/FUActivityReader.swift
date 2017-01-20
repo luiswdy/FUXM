@@ -50,6 +50,7 @@ class FUActivityReader: CustomDebugStringConvertible {
                 let metadata = FUActivityMetadata(data: data, isSupportHeartRate: self.supportHeartRate) {
                 self.metadata = metadata
                 self.state = .reading
+                debugPrint("metadata: \(metadata)")
             } else if let data = data, self.state == .reading {
                 assert(self.state == .reading, "why not reading?")
                 assert(self.metadata != nil, "metadata should be ready at this point")
@@ -59,8 +60,13 @@ class FUActivityReader: CustomDebugStringConvertible {
                     observer.on(.next(Array(self.activities)))
                     observer.on(.completed)
                     self.state = .done  // end of the chunk
+                    
+                    // TODO: ACK and stop fetching/unregister notification?
+                    
+                    
                     assert(self.metadata!.dataUntilNextHeader >= 0, "dataUntilNextHeader < 0. why?")
                 }
+                debugPrint("buffer: \(self.buffer)")
             } else {
                 assertionFailure("Should not get here")
             }

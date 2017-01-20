@@ -48,4 +48,28 @@ class FULEDColor {
     static func cyanColor() -> FULEDColor {
         return FULEDColor(red: 0, green: 6, blue: 6)!
     }
+    
+    static func orangeColor() -> FULEDColor {
+        return FULEDColor(red: 6, green: 1, blue: 0)!
+    }
+    
+    static func whiteColor() -> FULEDColor {
+        return FULEDColor(red: 6, green: 6, blue: 6)!
+    }
+    
+    static func pinkColor() -> FULEDColor {
+        return FULEDColor(red: 6, green: 0, blue: 2)!
+    }
+    
+    static func darkRedColor() -> FULEDColor {
+        return FULEDColor(red: 2, green: 0, blue: 0)!
+    }
+    
+    static func darkBlueColor() -> FULEDColor {
+        return FULEDColor(red: 0, green: 0, blue: 2)!
+    }
+    
+    static func darkGreenColor() -> FULEDColor {
+        return FULEDColor(red: 0, green: 2, blue: 0)!
+    }
 }

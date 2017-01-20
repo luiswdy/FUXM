@@ -10,13 +10,15 @@ import UIKit
 import RxBluetoothKit
 import RxSwift
 import PKHUD
+import HealthKit
 
 class ViewController: UIViewController {
     // MARK - properties
-    var miController = MiBandController()
-    var disposeBag = DisposeBag()
+    let miController = MiBandController()
+    let disposeBag = DisposeBag()
     var deviceInfo: FUDeviceInfo?
     var activityReader: FUActivityReader?
+    let healthStore = HKHealthStore()
     
     // MARK - Interface Builder outlets
     @IBOutlet var scanBtn: UIButton!
@@ -32,6 +34,7 @@ class ViewController: UIViewController {
     // MARK - view life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         miController.btState.subscribe(onNext:  { [unowned self] in // self holds miController
             switch $0 {
             case .poweredOn:
@@ -87,6 +90,7 @@ class ViewController: UIViewController {
                             strongSelf.miController.bindPeripheral().publish().connect().addDisposableTo(strongSelf.disposeBag)
                             strongSelf.miController.writeUserInfo(userInfo, salt: strongSelf.deviceInfo!.salt).publish().connect().addDisposableTo(strongSelf.disposeBag)
                             
+                            strongSelf.miController.writeDateTime(Date()).publish().connect().addDisposableTo(strongSelf.disposeBag)   // sync current datatime
                             
                             
                             DispatchQueue.main.async {
@@ -113,6 +117,16 @@ class ViewController: UIViewController {
             }, onDisposed: {
                 debugPrint("disposed")
             }).addDisposableTo(self.disposeBag)
+        }
+        
+        
+        
+        // health kit
+        self.healthStore.requestAuthorization(toShare: [HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!, HKObjectType.quantityType(forIdentifier: .stepCount)!],
+                                              read: [HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!, HKObjectType.quantityType(forIdentifier: .stepCount)!]) { (isSuccess, error) in
+                                                if !isSuccess {
+                                                    debugPrint("error: \(error)")
+                                                }
         }
         
     }
@@ -245,10 +259,12 @@ class ViewController: UIViewController {
                                 self.miController.bindPeripheral().publish().connect().addDisposableTo(self.disposeBag)
                                 
                                 
+                                self.miController.writeDateTime(Date()).publish().connect().addDisposableTo(self.disposeBag)   // sync current datatime
                                 
-                                self.vibrateBtn.isEnabled = true
-
                                 
+                                DispatchQueue.main.async {
+                                    self.vibrateBtn.isEnabled = true
+                                }
                                 
                             }).addDisposableTo(self.disposeBag)
                             
