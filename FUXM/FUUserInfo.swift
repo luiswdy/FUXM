@@ -22,13 +22,14 @@ enum FUAuthType: UInt8 {
 
 class FUUserInfo: CustomDebugStringConvertible, FUDataInitiable {
     private struct Consts {
+        static let incomingUserInfoLength: Int = 19
         static let uidRange: Range<Data.Index> = 0..<4
         static let genderRange: Range<Data.Index> = 4..<5
         static let ageRange: Range<Data.Index> = 5..<6
         static let heightRange: Range<Data.Index> = 6..<7
         static let weightRange: Range<Data.Index> = 7..<8
         static let typeRange: Range<Data.Index> = 8..<9
-        static let aliasRange: Range<Data.Index> = 9..<19
+        static let aliasRange: Range<Data.Index> = 9..<incomingUserInfoLength
     }
     
     private(set) var uid: UInt32
@@ -73,7 +74,7 @@ class FUUserInfo: CustomDebugStringConvertible, FUDataInitiable {
     // MARK - private
     private func parseData(_ data: Data?){
         guard let data = data else { return }
-        guard data.count >= 20 else { return }
+        guard data.count > Consts.incomingUserInfoLength else { return }
         self.uid = data.subdata(in: Consts.uidRange).withUnsafeBytes( { return UInt32((($0.pointee) as UInt32).bigEndian) } )
         let gender: FUGender? = data.subdata(in: Consts.genderRange).withUnsafeBytes( { return FUGender(rawValue: $0.pointee) } )
         if let gender = gender { self.gender = gender }
@@ -95,11 +96,11 @@ class FUUserInfo: CustomDebugStringConvertible, FUDataInitiable {
         bytes.append(self.weight)
         bytes.append(self.type.rawValue)
         bytes.append(contentsOf:Array(alias.utf8))
-        let paddingCount = 19 - bytes.count
+        let paddingCount = Consts.incomingUserInfoLength - bytes.count
         if  paddingCount > 0  {
             bytes.append(contentsOf: Array<UInt8>(repeating:UInt8(0), count:paddingCount))
         }
-        bytes.append(checksum(bytes: bytes, from: 0, length: 19, lastMACByte:salt))
+        bytes.append(checksum(bytes: bytes, from: 0, length: Consts.incomingUserInfoLength, lastMACByte:salt))
         // TODO not mili 1
         return Data(bytes: bytes)
     }

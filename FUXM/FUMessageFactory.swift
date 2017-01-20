@@ -14,6 +14,5 @@ class FUMessageFactory {
         alert.addAction(UIAlertAction(title: dismissButtonText, style: .default, handler: nil))
         return alert
     }
-    
 }
 

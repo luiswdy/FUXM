@@ -15,7 +15,7 @@ class FULEParams: CustomDebugStringConvertible, FUDataInitiable {
     var timeout: UInt16
     var advertisementInterval: UInt16
     
-    struct Consts {
+    private struct Consts {
         static let dataLength = 12
         static let minConnectionIntervalRange: Range<Data.Index> = 0..<2
         static let maxConnectionIntervalRange: Range<Data.Index> = 2..<4

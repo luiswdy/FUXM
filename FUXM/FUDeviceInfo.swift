@@ -127,7 +127,7 @@ class FUDeviceInfo: CustomDebugStringConvertible, FUDataInitiable {
         return isMili1S() || test1AHeartRateMode && isMili1A()
     }
     
-    func getHeartRateFirmwareVer() -> UInt32{
+    func getHeartRateFirmwareVer() -> UInt32 {
         if (test1AHeartRateMode) {
             return firmwareVer
         }

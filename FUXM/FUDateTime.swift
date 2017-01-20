@@ -17,7 +17,7 @@ class FUDateTime: CustomDebugStringConvertible, FUDataInitiable {
     var minute: UInt
     var second: UInt
     
-    struct Consts {
+    private struct Consts {
         static let timeZoneSecondsFromGMT = 0
         static let yearBase: UInt = 2000
         static let monthBase: UInt = 1

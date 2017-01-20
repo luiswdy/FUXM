@@ -109,13 +109,13 @@ extension MiBandController {
         fetchData                           = 0x6,
         firmwareInfo                        = 0x7,
         sendNotification                    = 0x8,
-//        factoryReset                        = 0x9,
+//        factoryReset                        = 0x9,    // no logner in-use
         confirmActivityDataTransferComplete = 0xa,
         sync                                = 0xb,
         reboot                              = 0xc,
         setColorTheme                       = 0xe,
         setWearPosition                     = 0xf,
-        setRealtimeSteps                    = 0x10, // no longer in-use
+//        setRealtimeSteps                    = 0x10, // no longer in-use
         stopSyncData                        = 0x11,
         getSensorData                       = 0x12,
         stopMotorVibrate                    = 0x13

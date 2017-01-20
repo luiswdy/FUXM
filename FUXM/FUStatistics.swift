@@ -46,17 +46,11 @@ class FUStatistics: CustomDebugStringConvertible, FUDataInitiable {
     
     func data() -> Data {
         var rawBytes: [UInt8] = []
-        rawBytes.append(contentsOf: toUInt8Array(wake))
-        rawBytes.append(contentsOf: toUInt8Array(vibrate))
-        rawBytes.append(contentsOf: toUInt8Array(light))
-        rawBytes.append(contentsOf: toUInt8Array(conn))
-        rawBytes.append(contentsOf: toUInt8Array(adv))
+        rawBytes.append(contentsOf: FUByteArrayConverter.toUInt8Array(wake))
+        rawBytes.append(contentsOf: FUByteArrayConverter.toUInt8Array(vibrate))
+        rawBytes.append(contentsOf: FUByteArrayConverter.toUInt8Array(light))
+        rawBytes.append(contentsOf: FUByteArrayConverter.toUInt8Array(conn))
+        rawBytes.append(contentsOf: FUByteArrayConverter.toUInt8Array(adv))
         return Data(bytes: rawBytes)
-    }
-    
-    // Convert to Data
-    private func toUInt8Array<T>(_ value: T) -> [UInt8] {
-        var value = value
-        return withUnsafeBytes(of: &value) { Array($0) }
     }
 }

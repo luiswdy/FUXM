@@ -23,5 +23,4 @@ class MiBandUserDefaults {
     static func storeBoundPeripheralUUID(_ uuid: UUID) {
         UserDefaults.standard.set(uuid.uuidString, forKey: "\(FUUserDefaultKeys.boundPeripheral)")
     }
-    
 }

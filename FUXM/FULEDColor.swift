@@ -24,4 +24,28 @@ class FULEDColor {
             self.blue = blue
         }
     }
+    
+    static func redColor() -> FULEDColor {
+        return FULEDColor(red: 6, green: 0, blue: 0)!
+    }
+    
+    static func blueColor() -> FULEDColor {
+        return FULEDColor(red: 0, green: 0, blue: 6)!
+    }
+    
+    static func greenColor() -> FULEDColor {
+        return FULEDColor(red: 0, green: 6, blue: 0)!
+    }
+    
+    static func purpleColor() -> FULEDColor {
+        return FULEDColor(red: 6, green: 0, blue: 6)!
+    }
+    
+    static func yellowColor() -> FULEDColor {
+        return FULEDColor(red: 6, green: 6, blue: 0)!
+    }
+    
+    static func cyanColor() -> FULEDColor {
+        return FULEDColor(red: 0, green: 6, blue: 6)!
+    }
 }

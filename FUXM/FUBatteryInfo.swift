@@ -19,7 +19,7 @@ class FUBatteryInfo: CustomDebugStringConvertible, FUDataInitiable {
     let chargesCount: UInt16
     let status: FUBatteryStatus
     
-    struct Consts {
+    private struct Consts {
         static let levelRange: Range<Data.Index> = 0..<1
         static let lastChargeDateRange: Range<Data.Index> = 1..<7
         static let chargesCountRange: Range<Data.Index> = 7..<9
