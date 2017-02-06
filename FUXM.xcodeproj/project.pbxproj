@@ -40,6 +40,8 @@
 		E9C17E631E2CA981006811BD /* FUActivityData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C17E621E2CA981006811BD /* FUActivityData.swift */; };
 		E9C17E651E2CA98B006811BD /* FUActivityDataFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C17E641E2CA98B006811BD /* FUActivityDataFragment.swift */; };
 		E9F993091E3242A700524C8B /* FURootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F993081E3242A700524C8B /* FURootTabBarController.swift */; };
+		E9F9930B1E32D2B700524C8B /* FUAlarmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9930A1E32D2B700524C8B /* FUAlarmViewController.swift */; };
+		E9F9930D1E32D50F00524C8B /* FUDashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9930C1E32D50F00524C8B /* FUDashboardViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +108,8 @@
 		E9C17E621E2CA981006811BD /* FUActivityData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUActivityData.swift; sourceTree = "<group>"; };
 		E9C17E641E2CA98B006811BD /* FUActivityDataFragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = FUActivityDataFragment.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E9F993081E3242A700524C8B /* FURootTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FURootTabBarController.swift; sourceTree = "<group>"; };
+		E9F9930A1E32D2B700524C8B /* FUAlarmViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUAlarmViewController.swift; sourceTree = "<group>"; };
+		E9F9930C1E32D50F00524C8B /* FUDashboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FUDashboardViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +195,8 @@
 				E98E81B51E1A7B0B0062B9A0 /* Utilities */,
 				E91641FE1DF840C300B89E8E /* AppDelegate.swift */,
 				E91642001DF840C300B89E8E /* ViewController.swift */,
+				E9F9930A1E32D2B700524C8B /* FUAlarmViewController.swift */,
+				E9F9930C1E32D50F00524C8B /* FUDashboardViewController.swift */,
 				E9F993081E3242A700524C8B /* FURootTabBarController.swift */,
 				E91642021DF840C300B89E8E /* Main.storyboard */,
 				E91642051DF840C300B89E8E /* Assets.xcassets */,
@@ -567,11 +573,13 @@
 				E91642011DF840C300B89E8E /* ViewController.swift in Sources */,
 				E954D7611E2C841B005F3664 /* FUCRC8Util.swift in Sources */,
 				E95FF1621E2F63760049072C /* FULEDColor.swift in Sources */,
+				E9F9930D1E32D50F00524C8B /* FUDashboardViewController.swift in Sources */,
 				E95FF1661E2F75C00049072C /* FUActivity.swift in Sources */,
 				E95960731E2B4D0E00DA5D54 /* FUSensorData.swift in Sources */,
 				E944DB191E27202A006A5110 /* MiBandUserDefaults.swift in Sources */,
 				E954D75F1E2C625B005F3664 /* FUActivityReader.swift in Sources */,
 				E944DB261E275AE2006A5110 /* FUDeviceInfo.swift in Sources */,
+				E9F9930B1E32D2B700524C8B /* FUAlarmViewController.swift in Sources */,
 				E9F993091E3242A700524C8B /* FURootTabBarController.swift in Sources */,
 				E95FF1601E2F5AD30049072C /* FUDataInitiable.swift in Sources */,
 				E91641FF1DF840C300B89E8E /* AppDelegate.swift in Sources */,

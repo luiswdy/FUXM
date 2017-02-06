@@ -98,6 +98,8 @@ class MiBandController: NSObject {
     var btState: Observable<BluetoothState> {
         return btManager.rx_state
     }
+    // TODO characteristic-ready rx to all characteristic dependent functions
+    var areCharacteristicsReady: Variable<Bool> = Variable(false)
     
     // MARK - initializer
     required override init() {
@@ -135,6 +137,8 @@ class MiBandController: NSObject {
             })
     }
     
+    
+    
     func listenOnRestoreState() -> Observable<RestoredState> {
         return btManager.listenOnRestoredState()
     }
@@ -143,8 +147,22 @@ class MiBandController: NSObject {
         return btManager.retrievePeripherals(withIdentifiers: [uuid]).map { return $0.first }   // get the first one as default, as we only pass one uuid
     }
     
+    // TODO: sample
     func readDeviceInfo() -> Observable<FUDeviceInfo?> {
-        return MiBandController.readValueFor(characteristic: characteristicDict[.deviceInfo], FUDeviceInfo.self)
+        return waitUntilCharacteristicsReady(closure: { return MiBandController.readValueFor(characteristic: self.characteristicDict[.deviceInfo], FUDeviceInfo.self) } )
+    }
+    
+    // TODO FUDataInitiable for String ??
+    func readDeviceName() -> Observable<String?> {
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return self.characteristicDict[.deviceName]!.readValue().map({ (characteristic) -> String? in
+                if let value = characteristic.value {
+                    return String(data: value, encoding: .utf8)
+                } else {
+                    return nil
+                }
+            })
+        })
     }
 
     func readUserInfo() -> Observable<FUUserInfo?> {
@@ -185,7 +203,7 @@ class MiBandController: NSObject {
     }
     
     func readBatteryInfo() -> Observable<FUBatteryInfo?> {
-        return MiBandController.readValueFor(characteristic: characteristicDict[.battery], FUBatteryInfo.self)
+        return waitUntilCharacteristicsReady(closure:  { [unowned self] in return MiBandController.readValueFor(characteristic: self.characteristicDict[.battery], FUBatteryInfo.self) } )
     }
     
     func readLEParams() -> Observable<FULEParams?> {
@@ -213,7 +231,9 @@ class MiBandController: NSObject {
     }
     
     func setNotificationAndMonitorUpdates(characteristic: FUCharacteristicUUID) -> Observable<Characteristic> {
-        return characteristicDict[characteristic]!.setNotificationAndMonitorUpdates()
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return self.characteristicDict[characteristic]!.setNotificationAndMonitorUpdates()
+        })
     }
     
     func readSensorData() -> Observable<FUSensorData?> {
@@ -279,6 +299,15 @@ class MiBandController: NSObject {
         
     }
     // MARK - private methods
+    
+    // generic function to wait characteristic dict ready
+    private func waitUntilCharacteristicsReady<T>(closure: @escaping () -> Observable<T>) -> Observable<T>{
+        return areCharacteristicsReady.asObservable().filter { (isReady) -> Bool in
+            return isReady
+        }.flatMap{ (_) -> Observable<T> in
+            return closure()
+        }
+    }
     
     // Generic utility function
     static private func readValueFor<T: FUDataInitiable>(characteristic: Characteristic?, _ type: T.Type) -> Observable<T?> {
