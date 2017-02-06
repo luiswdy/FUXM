@@ -147,12 +147,12 @@ class MiBandController: NSObject {
         return btManager.retrievePeripherals(withIdentifiers: [uuid]).map { return $0.first }   // get the first one as default, as we only pass one uuid
     }
     
-    // TODO: sample
     func readDeviceInfo() -> Observable<FUDeviceInfo?> {
-        return waitUntilCharacteristicsReady(closure: { return MiBandController.readValueFor(characteristic: self.characteristicDict[.deviceInfo], FUDeviceInfo.self) } )
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return MiBandController.readValueFor(characteristic: self.characteristicDict[.deviceInfo], FUDeviceInfo.self)
+        })
     }
     
-    // TODO FUDataInitiable for String ??
     func readDeviceName() -> Observable<String?> {
         return waitUntilCharacteristicsReady(closure: { [unowned self] in
             return self.characteristicDict[.deviceName]!.readValue().map({ (characteristic) -> String? in
@@ -166,15 +166,21 @@ class MiBandController: NSObject {
     }
 
     func readUserInfo() -> Observable<FUUserInfo?> {
-        return MiBandController.readValueFor(characteristic: characteristicDict[.userInfo], FUUserInfo.self)
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return MiBandController.readValueFor(characteristic: self.characteristicDict[.userInfo], FUUserInfo.self)
+        })
+        
     }
     
     func writeUserInfo(_ userInfo: FUUserInfo, salt: UInt8) -> Observable<Characteristic> {
-        return MiBandController.writeValueTo(characteristic: characteristicDict[.userInfo],
-                                             data: userInfo.data(salt: salt),
-                                             type: .withResponse)
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return MiBandController.writeValueTo(characteristic: self.characteristicDict[.userInfo],
+                                                 data: userInfo.data(salt: salt),
+                                                 type: .withResponse)
+        })
     }
 
+    // TODO: need wait characteristicDict ready in another way
     func vibrate(alertLevel: VibrationAlertLevel, ledColorForMildAlert: FULEDColor? = nil) {
         assert(characteristicDict[.deviceInfo] != nil && characteristicDict[.controlPoint] != nil, "characteristics are nil")
         var data: Data
@@ -197,33 +203,45 @@ class MiBandController: NSObject {
     }
     
     func bindPeripheral() -> Observable<Characteristic> {
-        return MiBandController.writeValueTo(characteristic: characteristicDict[.pair],
-                                             data: Data(bytes:FUByteArrayConverter.toUInt8Array(PairCommand.pair.rawValue)),
-                                             type: .withResponse)
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return MiBandController.writeValueTo(characteristic: self.characteristicDict[.pair],
+                                                 data: Data(bytes:FUByteArrayConverter.toUInt8Array(PairCommand.pair.rawValue)),
+                                                 type: .withResponse)
+            
+        })
     }
     
     func readBatteryInfo() -> Observable<FUBatteryInfo?> {
-        return waitUntilCharacteristicsReady(closure:  { [unowned self] in return MiBandController.readValueFor(characteristic: self.characteristicDict[.battery], FUBatteryInfo.self) } )
+        return waitUntilCharacteristicsReady(closure:  { [unowned self] in
+            return MiBandController.readValueFor(characteristic: self.characteristicDict[.battery], FUBatteryInfo.self)
+        })
     }
     
     func readLEParams() -> Observable<FULEParams?> {
-        return MiBandController.readValueFor(characteristic: characteristicDict[.leParams], FULEParams.self)
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return MiBandController.readValueFor(characteristic: self.characteristicDict[.leParams], FULEParams.self)
+        })
     }
     
+    // TODO: need wait characteristicDict ready in another way
     func writeLEParams(_ leParams: FULEParams) -> Observable<Characteristic> {
-        return MiBandController.writeValueTo(characteristic: characteristicDict[.leParams], data: leParams.data() , type: .withResponse)
+        return MiBandController.writeValueTo(characteristic: self.characteristicDict[.leParams], data: leParams.data() , type: .withResponse)
     }
     
     func readDateTime() -> Observable<FUDateTime?> {
-        return MiBandController.readValueFor(characteristic: characteristicDict[.dateTime], FUDateTime.self)
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return MiBandController.readValueFor(characteristic: self.characteristicDict[.dateTime], FUDateTime.self)
+        })
     }
     
+    // TODO: need wait characteristicDict ready in another way
     func writeDateTime(_ date: Date) -> Observable<Characteristic> {
         var data = FUDateTime(date: date).data()
         data.append(FUDateTime().data())    // with empty date here
         return MiBandController.writeValueTo(characteristic: characteristicDict[.dateTime], data: data, type: .withResponse)
     }
 
+    // TODO: need wait characteristicDict ready in another way
     func writeDateTime(newerDate: FUDateTime, olderDate: FUDateTime) -> Observable<Characteristic> {
         var data = newerDate.data()
         data.append(olderDate.data())
@@ -237,7 +255,9 @@ class MiBandController: NSObject {
     }
     
     func readSensorData() -> Observable<FUSensorData?> {
-        return MiBandController.readValueFor(characteristic: characteristicDict[.sensorData], FUSensorData.self)
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return MiBandController.readValueFor(characteristic: self.characteristicDict[.sensorData], FUSensorData.self)
+        })
     }
     
 //    func startSensorData() {    // for notify sensor data
@@ -250,18 +270,21 @@ class MiBandController: NSObject {
 //        self.activePeripheral?.readValue(for: activityDataCharacteristic)
 //    }
 //    
+    // TODO: need wait characteristicDict ready in another way
     func reboot() -> Observable<Characteristic> {
         return MiBandController.writeValueTo(characteristic: characteristicDict[.controlPoint],
                                              data: Data(bytes: [ControlPointCommand.reboot.rawValue]),
                                              type: .withResponse)
     }
 
+    // TODO: need wait characteristicDict ready in another way
     func setWearPosition(position: FUWearPosition) -> Observable<Characteristic> {
         return MiBandController.writeValueTo(characteristic: characteristicDict[.controlPoint],
                                              data: Data(bytes: [ControlPointCommand.setWearPosition.rawValue, position.rawValue]),
                                              type: .withResponse)
     }
     
+    // TODO: need wait characteristicDict ready in another way
     func setFitnessGoal(steps: UInt16) -> Observable<Characteristic> {
         assert(characteristicDict[.controlPoint] != nil, "characteristic is nil")
         return MiBandController.writeValueTo(characteristic: characteristicDict[.controlPoint],
@@ -269,11 +292,13 @@ class MiBandController: NSObject {
                                              type: .withResponse)
     }
     
+    // TODO: need wait characteristicDict ready in another way
     func fetchActivityData() -> Observable<Characteristic> {
         assert(characteristicDict[.controlPoint] != nil, "characteristic is nil")
         return MiBandController.writeValueTo(characteristic: characteristicDict[.controlPoint], data: Data(bytes: [ControlPointCommand.fetchData.rawValue]), type: .withResponse)
     }
 
+    // TODO: need wait characteristicDict ready in another way
     func setAlarm(alarm: FUAlarmClock) -> Observable<Characteristic> {
         assert(characteristicDict[.controlPoint] != nil, "characteristic is nil")
         var data = Data(bytes: [ControlPointCommand.setTimer.rawValue])
@@ -283,15 +308,25 @@ class MiBandController: NSObject {
     
     func getMACAddress() -> Observable<Characteristic> {
         assert(characteristicDict[.macAddress] != nil, "characteristic is nil")
-        return characteristicDict[.macAddress]!.readValue()
+        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+            return self.characteristicDict[.macAddress]!.readValue()
+        })
     }
     
+    // TODO: need wait characteristicDict ready in another way
     func setRealtimeStepsNofitication(start: Bool) -> Observable<Characteristic> {     // start = true ==> start, start = false ==> stop
         return MiBandController.writeValueTo(characteristic: characteristicDict[.controlPoint],
                                              data: Data(bytes: [ControlPointCommand.setRealtimeStepNotification.rawValue, start ? 1 : 0]),
                                              type: .withResponse)
     }
     
+//    func readRealtimeSteps() -> Observable<> {
+//        return waitUntilCharacteristicsReady(closure: { [unowned self] in
+//            return MiBandController.readValueFor(characteristic: self.characteristicDict[.realtimeSteps], <#T##type: T.Type##T.Type#>)
+//        })
+//    }
+    
+    // TODO: need wait characteristicDict ready in another way
     func setSensorRead(start: Bool) -> Observable<Characteristic> {     // start = true ==> start sensor read, start = false ==> stop sensor read
         return MiBandController.writeValueTo(characteristic: characteristicDict[.controlPoint],
                                              data: Data(bytes: [ControlPointCommand.getSensorData.rawValue, start ? 1 : 0]),

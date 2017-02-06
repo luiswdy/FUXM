@@ -11,8 +11,10 @@ import RxSwift
 
 class FUDashboardViewController: UIViewController, FUTabBarChildViewController {
     @IBOutlet var scrollView: UIScrollView!
-    @IBOutlet var batteryPercentage: UILabel!
-    @IBOutlet var boundPeripheral: UILabel!
+    @IBOutlet var batteryLevel: UILabel!
+    @IBOutlet var batteryStatus: UILabel!
+    @IBOutlet var boundMiband: UILabel!
+    @IBOutlet var realtimeSteps: UILabel!
     private var internalMibandController: MiBandController!
     private var disposeBag =  DisposeBag()
     
@@ -40,29 +42,31 @@ class FUDashboardViewController: UIViewController, FUTabBarChildViewController {
     // MARK - life cycle
     override func viewDidLoad() {
         setup()
+        reload(sender: nil)
     }
     
     func refresh(_ sender: UIRefreshControl) {
         debugPrint("refreshing")
-        sender.endRefreshing()
+        reload(sender: sender)
     }
     
     // MARK - private methods
     
     private func setup() {
-//        self.scrollView.refreshControl = UIRefreshControl()
-//        self.scrollView.refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
-//        guard let rootTabBarController = self.tabBarController as? FURootTabBarController else {
-//            assertionFailure("tabBarController should not be nil and it should be of class FURootTabBarController")
-//            return
-//        }
-//        self.mibandController = rootTabBarController.mibandController
+        self.scrollView.refreshControl = UIRefreshControl()
+        self.scrollView.refreshControl?.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        guard let rootTabBarController = self.tabBarController as? FURootTabBarController else {
+            assertionFailure("tabBarController should not be nil and it should be of class FURootTabBarController")
+            return
+        }
+        self.mibandController = rootTabBarController.mibandController
         assert(internalMibandController != nil, "internalMibadController should not be nil")
-        
+    }
+    
+    func reload(sender: UIRefreshControl?) {
         // device name
-        
         internalMibandController.readDeviceName().subscribe(onNext: { [weak self] (deviceName) in
-            DispatchQueue.main.async { self?.boundPeripheral.text = deviceName }
+            DispatchQueue.main.async { self?.boundMiband.text = deviceName }
             }, onError: { (error) in
                 debugPrint("Failed getting device info: \(error)")
         }).addDisposableTo(disposeBag)
@@ -70,14 +74,21 @@ class FUDashboardViewController: UIViewController, FUTabBarChildViewController {
         // battery info
         internalMibandController.readBatteryInfo().subscribe(onNext: { [weak self] (batteryInfo) in
             DispatchQueue.main.async {
-                self?.batteryPercentage.text = "\(batteryInfo?.level)"
+                if let level = batteryInfo?.level {
+                    self?.batteryLevel.text = "\(level)"
+                }
+                if let status = batteryInfo?.status {
+                    self?.batteryStatus.text = "\(status)"
+                }
             }
             }, onError: { (error) in
                 debugPrint("Failed getting device info: \(error)")
         }).addDisposableTo(disposeBag)
-    }
-    
-    func reload() {
+        
+        // realtime steps
+//        internalMibandController
+        
+        sender?.endRefreshing()
     }
 
 }
