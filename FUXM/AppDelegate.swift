@@ -7,15 +7,25 @@
 //
 
 import UIKit
+import CallKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
 
     var window: UIWindow?
+    let callObserver = CXCallObserver()
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        
+        // TEST
+        callObserver.setDelegate(self, queue: nil)
+        
+        // END TEST
+        
+        
         return true
     }
 
@@ -41,6 +51,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    
+    // MARK - CXCallObserverDelegate
+    
+    func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
+        debugPrint("1. \(call.hasConnected)")
+        debugPrint("2. \(call.hasEnded)")
+        debugPrint("3. \(call.isOnHold)")
+        debugPrint("4. \(call.isOutgoing)")
+        debugPrint("5. \(call.uuid)")
+        debugPrint("6. \(callObserver.calls)")
+        
+        if (call.hasConnected) {
+            debugPrint("hasConnected")
+        } else {
+            debugPrint("!hasConnected")
+        }
+    }
 
 }
 
