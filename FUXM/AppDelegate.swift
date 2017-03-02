@@ -8,17 +8,35 @@
 
 import UIKit
 import CallKit
+import RxBluetoothKit
+import RxSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
 
     var window: UIWindow?
     let callObserver = CXCallObserver()
-
+    
+//    let disposeBag = DisposeBag()
+//    let mibandController = MiBandController()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        
+        
+        
+//        mibandController.listenOnRestoreState().subscribe(onNext: { [weak self] (restoredState) in
+//            if let strongSelf = self, let peripheral = restoredState.peripherals.first {
+//                strongSelf.mibandController.connect(peripheral).publish().connect().addDisposableTo(strongSelf.disposeBag)  // TODO subscribe next complete error ..etc
+//            }
+//            }, onError: { (error) in
+//                debugPrint("listen to retored state failed: \(error)")
+//        }, onCompleted: {
+//            debugPrint("\(#function) completed")
+//        }, onDisposed: {
+//            debugPrint("disposed")
+//        }).addDisposableTo(self.disposeBag)
         
         // TEST
         callObserver.setDelegate(self, queue: nil)
@@ -28,6 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
         
         return true
     }
+    
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

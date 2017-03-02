@@ -137,7 +137,7 @@ class ViewController: UIViewController {
     }
     
     // MARK - IBActions
-    @IBAction func scan(sender: UIButton) {
+    @IBAction func scan(sender: AnyObject) {
         debugPrint("\(#function) sender: \(sender)")
         var peripherals: [RxBluetoothKit.ScannedPeripheral] = []
         HUD.show(.labeledProgress(title: "Scanning", subtitle: "Looking for Mi bands" ))
@@ -157,7 +157,7 @@ class ViewController: UIViewController {
         }).addDisposableTo(disposeBag)
     }
     
-    @IBAction func stopScan(sender: UIButton) { // manually stop scanning
+    @IBAction func stopScan(sender: AnyObject) { // manually stop scanning
         debugPrint("\(#function) sender: \(sender)")
         //        cbCentralManager.stopScan()
     }
