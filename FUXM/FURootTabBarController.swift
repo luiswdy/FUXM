@@ -57,7 +57,7 @@ class FURootTabBarController: UITabBarController {
             }, onError: { (error) in
                 debugPrint("listen to retored state failed: \(error)")
         }, onCompleted: { [unowned self] in
-            self.mibandController.vibrate(alertLevel: .hignAlert)
+            self.mibandController.vibrate(alertLevel: .highAlert)
             debugPrint("\(#function) completed")
         }, onDisposed: {
             debugPrint("disposed")
@@ -87,32 +87,32 @@ class FURootTabBarController: UITabBarController {
         mibandController.readDeviceInfo().subscribe(onNext: { [unowned self] in
             debugPrint("deviceInfo: \($0)")
             self.mibandController.writeLEParams(FULEParams.lowLatencyLEParams()).publish().connect().addDisposableTo(self.disposeBag)
-            self.mibandController.setNotificationAndMonitorUpdates(characteristic: .notification)
-                .subscribe(onNext: { [unowned self] in self.handleNotifications(from: $0) },
-                           onError: { debugPrint("\($0)")},
-                           onCompleted: { debugPrint("completed")},
-                           onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
-            let userInfo = FUUserInfo(uid: 1, gender: .male, age: 37, height: 170, weight: 63, type: .normal, alias: "Luis Wu") // TODO: get user info somewhere instead of hard-coded
-            if let salt = $0?.salt {
-                self.mibandController.writeUserInfo(userInfo, salt: salt).publish().connect().addDisposableTo(self.disposeBag)
-            } else {
-                assertionFailure("cannot get salt")
-            }
+//            self.mibandController.setNotificationAndMonitorUpdates(characteristic: .notification)
+//                .subscribe(onNext: { [unowned self] in self.handleNotifications(from: $0) },
+//                           onError: { debugPrint("\($0)")},
+//                           onCompleted: { debugPrint("completed")},
+//                           onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
+//            let userInfo = FUUserInfo(uid: 1, gender: .male, age: 37, height: 170, weight: 63, type: .normal, alias: "Luis Wu") // TODO: get user info somewhere instead of hard-coded
+//            if let salt = $0?.salt {
+//                self.mibandController.writeUserInfo(userInfo, salt: salt).publish().connect().addDisposableTo(self.disposeBag)
+//            } else {
+//                assertionFailure("cannot get salt")
+//            }
             self.mibandController.bindPeripheral().publish().connect().addDisposableTo(self.disposeBag)
             self.mibandController.setWearPosition(position: .leftHand).publish().connect().addDisposableTo(self.disposeBag)
             self.mibandController.setFitnessGoal(steps: 10000).publish().connect().addDisposableTo(self.disposeBag)
-            self.mibandController.setNotificationAndMonitorUpdates(characteristic: .activityData) .subscribe(onNext: { [unowned self] in self.handleNotifications(from: $0) },
-                                                                                                             onError: { debugPrint("\($0)")},
-                                                                                                             onCompleted: { debugPrint("completed")},
-                                                                                                             onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
-            self.mibandController.setNotificationAndMonitorUpdates(characteristic: .realtimeSteps) .subscribe(onNext: { [unowned self] in self.handleNotifications(from: $0) },
-                                                                                                              onError: { debugPrint("\($0)")},
-                                                                                                              onCompleted: { debugPrint("completed")},
-                                                                                                              onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
-            self.mibandController.setNotificationAndMonitorUpdates(characteristic: .battery).publish() .subscribe(onNext: { [unowned self] in self.handleNotifications(from: $0) },
-                                                                                                                  onError: { debugPrint("\($0)")},
-                                                                                                                  onCompleted: { debugPrint("completed")},
-                                                                                                                  onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
+//            self.mibandController.setNotificationAndMonitorUpdates(characteristic: .activityData) .subscribe(onNext: { [unowned self] in self.handleNotifications(from: $0) },
+//                                                                                                             onError: { debugPrint("\($0)")},
+//                                                                                                             onCompleted: { debugPrint("completed")},
+//                                                                                                             onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
+//            self.mibandController.setNotificationAndMonitorUpdates(characteristic: .realtimeSteps) .subscribe(onNext: { [unowned self] in self.handleNotifications(from: $0) },
+//                                                                                                              onError: { debugPrint("\($0)")},
+//                                                                                                              onCompleted: { debugPrint("completed")},
+//                                                                                                              onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
+//            self.mibandController.setNotificationAndMonitorUpdates(characteristic: .battery).publish() .subscribe(onNext: { [unowned self] in self.handleNotifications(from: $0) },
+//                                                                                                                  onError: { debugPrint("\($0)")},
+//                                                                                                                  onCompleted: { debugPrint("completed")},
+//                                                                                                                  onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
             self.mibandController.setNotificationAndMonitorUpdates(characteristic: .weird).publish() .subscribe(onNext: { [unowned self] in self.handleNotifications(from: $0) },
                                                                                                                 onError: { debugPrint("\($0)")},
                                                                                                                 onCompleted: { debugPrint("completed")},
@@ -120,7 +120,7 @@ class FURootTabBarController: UITabBarController {
             self.mibandController.writeDateTime(Date()).publish().connect().addDisposableTo(self.disposeBag)   // sync current datatime
             let dateTime = FUDateTime(year: 17, month: 3, day: 2, hour: 6, minute: 30, second: 00)
             self.mibandController.setAlarm(alarm: FUAlarmClock(index: 0, enable: true, dateTime: dateTime, enableSmartWakeUp: false, repetition: .everyDay)).publish().connect().addDisposableTo(self.disposeBag)
-            self.mibandController.writeLEParams(FULEParams.highLatencyLEParams()).publish().connect().addDisposableTo(self.disposeBag)
+//            self.mibandController.writeLEParams(FULEParams.highLatencyLEParams()).publish().connect().addDisposableTo(self.disposeBag)
         }).addDisposableTo(self.disposeBag)
     }
     

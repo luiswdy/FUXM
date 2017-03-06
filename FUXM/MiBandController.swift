@@ -18,7 +18,7 @@ enum VibrationAlertLevel: UInt8 {
     case
     noAlert     = 0x0,
     mildAlert   = 0x1,
-    hignAlert   = 0x2,
+    highAlert   = 0x2,
     vibrateOnly = 0x4
 }
 

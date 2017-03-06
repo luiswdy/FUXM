@@ -56,6 +56,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        
+        var backgroundTaskId: UIBackgroundTaskIdentifier!
+        backgroundTaskId = application.beginBackgroundTask {
+            application.endBackgroundTask(backgroundTaskId)
+            backgroundTaskId = UIBackgroundTaskInvalid
+        }
+        
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async(execute: DispatchWorkItem(block: {
+            repeat {
+                Thread.sleep(forTimeInterval: UIApplication.shared.backgroundTimeRemaining)
+                debugPrint("background task executed")
+            } while application.applicationState == .background
+            debugPrint("background task ended")
+            application.endBackgroundTask(backgroundTaskId)
+            backgroundTaskId = UIBackgroundTaskInvalid
+        }))
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -69,7 +85,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
     
     // MARK - CXCallObserverDelegate
     
@@ -85,6 +100,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
             debugPrint("hasConnected")
         } else {
             debugPrint("!hasConnected")
+        }
+        
+        debugPrint("time remaining: \(UIApplication.shared.backgroundTimeRemaining)")
+        
+        if !call.hasConnected && !call.hasEnded && !call.isOnHold && !call.isOutgoing {
+            (self.window?.rootViewController as? FURootTabBarController)?.mibandController.vibrate(alertLevel: .highAlert)
         }
     }
 
