@@ -12,13 +12,16 @@ import RxBluetoothKit
 import RxSwift
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate, CXProviderDelegate {
 
     var window: UIWindow?
     let callObserver = CXCallObserver()
     
+    let callProvider = CXProvider(configuration: CXProviderConfiguration(localizedName: "TEST"))
+    
 //    let disposeBag = DisposeBag()
 //    let mibandController = MiBandController()
+    var test: MiBandController!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -40,7 +43,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
         
         // TEST
         callObserver.setDelegate(self, queue: nil)
-        
+        callProvider.setDelegate(self, queue: DispatchQueue.global())
+        test = (self.window!.rootViewController as! FURootTabBarController).mibandController
         // END TEST
         
         
@@ -58,14 +62,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         
         var backgroundTaskId: UIBackgroundTaskIdentifier!
-        backgroundTaskId = application.beginBackgroundTask {
+        backgroundTaskId = application.beginBackgroundTask(withName: "LUIS") {
             application.endBackgroundTask(backgroundTaskId)
             backgroundTaskId = UIBackgroundTaskInvalid
         }
         
+        debugPrint("backgroundTaskId: \(backgroundTaskId)")
+        
         DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async(execute: DispatchWorkItem(block: {
             repeat {
-                Thread.sleep(forTimeInterval: UIApplication.shared.backgroundTimeRemaining)
+                Thread.sleep(forTimeInterval: 100)
                 debugPrint("background task executed")
             } while application.applicationState == .background
             debugPrint("background task ended")
@@ -84,6 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        debugPrint("\(#function)")
     }
     
     // MARK - CXCallObserverDelegate
@@ -102,12 +109,63 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate {
             debugPrint("!hasConnected")
         }
         
-        debugPrint("time remaining: \(UIApplication.shared.backgroundTimeRemaining)")
         
-        if !call.hasConnected && !call.hasEnded && !call.isOnHold && !call.isOutgoing {
-            (self.window?.rootViewController as? FURootTabBarController)?.mibandController.vibrate(alertLevel: .highAlert)
-        }
+        debugPrint("time remaining: \(UIApplication.shared.backgroundTimeRemaining) , controller: \((self.window?.rootViewController as? FURootTabBarController)?.mibandController)")
+        
+//        if !call.hasConnected && !call.hasEnded && !call.isOnHold && !call.isOutgoing {
+//            (self.window?.rootViewController as? FURootTabBarController)?.mibandController.vibrate(alertLevel: .highAlert)
+//        }
+        
+        test.vibrate(alertLevel: .mildAlert)
     }
 
+    
+    // TEST
+    func providerDidBegin(_ provider: CXProvider) {
+        debugPrint("\(#function)")
+    }
+    
+    func providerDidReset(_ provider: CXProvider) {
+        debugPrint("\(#function)")
+    }
+    
+    func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
+        debugPrint("\(#function)")
+    }
+    
+    func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
+        debugPrint("\(#function)")
+    }
+    
+    func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
+        debugPrint("\(#function)")
+    }
+    
+    func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
+        debugPrint("\(#function)")
+    }
+    
+    func provider(_ provider: CXProvider, timedOutPerforming action: CXAction) {
+        debugPrint("\(#function)")
+    }
+    
+    func provider(_ provider: CXProvider, perform action: CXPlayDTMFCallAction) {
+        debugPrint("\(#function)")
+    }
+    
+    func provider(_ provider: CXProvider, perform action: CXSetGroupCallAction) {
+        debugPrint("\(#function)")
+    }
+    
+    func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
+        debugPrint("\(#function)")
+    }
+    
+    func provider(_ provider: CXProvider, execute transaction: CXTransaction) -> Bool {
+        debugPrint("\(#function)")
+        return true
+    }
+    // END TEST
+    
 }
 
