@@ -86,9 +86,10 @@ class ViewController: UIViewController {
                                            onError: { debugPrint("\($0)")},
                                            onCompleted: { debugPrint("completed")},
                                            onDisposed: { debugPrint("disposed")}).addDisposableTo(strongSelf.disposeBag)
-                            let userInfo = FUUserInfo(uid: 123, gender: .male, age: 37, height: 170, weight: 64, type: .normal, alias: "Luis")
-                            strongSelf.miController.bindPeripheral().publish().connect().addDisposableTo(strongSelf.disposeBag)
-                            strongSelf.miController.writeUserInfo(userInfo, salt: strongSelf.deviceInfo!.salt).publish().connect().addDisposableTo(strongSelf.disposeBag)
+//                            let userInfo = FUUserInfo(uid: 123, gender: .male, age: 37, height: 170, weight: 64, type: .normal, alias: "Luis")
+//                            strongSelf.miController.bindPeripheral().publish().connect().addDisposableTo(strongSelf.disposeBag)
+//                            let userInfo = FUUserInfo(uid: 1, gender: .female, age: 0, height: 0, weight: 0, type: .normal, alias: "")
+//                            strongSelf.miController.writeUserInfo(userInfo, salt: strongSelf.deviceInfo!.salt).publish().connect().addDisposableTo(strongSelf.disposeBag)
                             
                             strongSelf.miController.writeDateTime(Date()).publish().connect().addDisposableTo(strongSelf.disposeBag)   // sync current datatime
                             

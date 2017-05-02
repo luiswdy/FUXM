@@ -135,9 +135,10 @@ class FUDashboardViewController: UIViewController, FUTabBarChildViewController {
                                                onError: { debugPrint("\($0)")},
                                                onCompleted: { debugPrint("completed")},
                                                onDisposed: { debugPrint("disposed")}).addDisposableTo(self.disposeBag)
-                                let userInfo = FUUserInfo(uid: 1, gender: .male, age: 37, height: 170, weight: 63, type: .normal, alias: "Luis Wu")
-                                self.mibandController.writeUserInfo(userInfo, salt: self.deviceInfo!.salt).publish().connect().addDisposableTo(self.disposeBag)
+//                                let userInfo = FUUserInfo(uid: 1, gender: .female, age: 0, height: 0, weight: 0, type: .normal, alias: "")
+//                                self.mibandController.writeUserInfo(userInfo, salt: self.deviceInfo!.salt).publish().connect().addDisposableTo(self.disposeBag)
                                 self.mibandController.bindPeripheral().publish().connect().addDisposableTo(self.disposeBag)
+
                                 
                                 
                                 self.mibandController.writeDateTime(Date()).publish().connect().addDisposableTo(self.disposeBag)   // sync current datatime
@@ -190,6 +191,11 @@ class FUDashboardViewController: UIViewController, FUTabBarChildViewController {
         mibandController.vibrate(alertLevel: .mildAlert, ledColorForMildAlert: FULEDColor(red: 6, green: 0, blue: 6))
     }
 
+    @IBAction func pair(sender: Any) {
+//        self.mibandController.bindPeripheral().publish().connect().addDisposableTo(self.disposeBag)
+        let userInfo = FUUserInfo(uid: 1, gender: .female, age: 0, height: 0, weight: 0, type: .normal, alias: "")
+        self.mibandController.writeUserInfo(userInfo, salt: self.deviceInfo!.salt).publish().connect().addDisposableTo(self.disposeBag)
+    }
     
     
     func handleNotifications(from characteristic: Characteristic) {

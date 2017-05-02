@@ -42,9 +42,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate, C
 //        }).addDisposableTo(self.disposeBag)
         
         // TEST
-        callObserver.setDelegate(self, queue: nil)
+//        callObserver.setDelegate(self, queue: nil)
         callProvider.setDelegate(self, queue: DispatchQueue.global())
-        test = (self.window!.rootViewController as! FURootTabBarController).mibandController
+//        test = (self.window!.rootViewController as! FURootTabBarController).mibandController
         // END TEST
         
         
@@ -116,7 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CXCallObserverDelegate, C
 //            (self.window?.rootViewController as? FURootTabBarController)?.mibandController.vibrate(alertLevel: .highAlert)
 //        }
         
-        test.vibrate(alertLevel: .mildAlert)
+//        test.vibrate(alertLevel: .mildAlert)
     }
 
     

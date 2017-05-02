@@ -26,7 +26,7 @@ class FUDateTime: CustomDebugStringConvertible, FUDataInitiable {
         static let dayRange: Range<Data.Index> = 2..<3
         static let hourRange: Range<Data.Index> = 3..<4
         static let minuteRange: Range<Data.Index> = 4..<5
-        static let secondRange: Range<Data.Index>= 5..<6
+        static let secondRange: Range<Data.Index> = 5..<6
         static let calendar = Calendar(identifier: .gregorian)
         static let timeZone = TimeZone(secondsFromGMT: timeZoneSecondsFromGMT)
         static let dataLength = 12  // can be six (activity data)
